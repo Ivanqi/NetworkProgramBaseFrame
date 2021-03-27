@@ -1,5 +1,5 @@
-#ifndef EVENT_THREAD_H
-#define EVENT_THREAD_H
+#ifndef NETWORKER_BASE_THREAD_H
+#define NETWORKER_BASE_THREAD_H
 
 
 #include <Types.h>
@@ -8,57 +8,58 @@
 #include <pthread.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-#include <boost/noncopyable.hpp>
 
 #include "Atomic.h"
 #include "CountDownLatch.h"
 
-class Thread: boost::noncopyable
+namespace networker
 {
-    public:
-        typedef std::function<void()> ThreadFunc;
+    class Thread: noncopyable
+    {
+        public:
+            typedef std::function<void()> ThreadFunc;
 
-    private:
-        bool started_;
-        bool joined_;
-        pthread_t pthreadId_;
-        pid_t tid_;
-        ThreadFunc func_;
-        string name_;
-        CountDownLatch latch_;
-        static AtomicInt32 numCreated_;
+        private:
+            bool started_;
+            bool joined_;
+            pthread_t pthreadId_;
+            pid_t tid_;
+            ThreadFunc func_;
+            string name_;
+            CountDownLatch latch_;
+            static AtomicInt32 numCreated_;
 
-    public:
+        public:
 
-        explicit Thread (const ThreadFunc&, const string& name = string());
+            explicit Thread (const ThreadFunc&, const string& name = string());
 
-        ~Thread();
-        
-        void start();
+            ~Thread();
+            
+            void start();
 
-        int join();
+            int join();
 
-        bool started() const {
-            return started_;
-        };
+            bool started() const {
+                return started_;
+            };
 
-        pid_t tid() const
-        {
-            return tid_;
-        }
+            pid_t tid() const
+            {
+                return tid_;
+            }
 
-        const string& name() const
-        {
-            return name_;
-        }
+            const string& name() const
+            {
+                return name_;
+            }
 
-        static int numCreated()
-        {
-            return numCreated_.get();
-        }
+            static int numCreated()
+            {
+                return numCreated_.get();
+            }
 
-    private:
-        void setDefaultName();
+        private:
+            void setDefaultName();
+    };
 };
-
 #endif

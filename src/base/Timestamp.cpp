@@ -4,6 +4,8 @@
 
 #include "Timestamp.h"
 
+using namespace networker;
+
 string Timestamp::toString() const
 {
     char buf[32] = {0};
