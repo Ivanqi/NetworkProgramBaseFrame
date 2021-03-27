@@ -3,76 +3,82 @@
 
 
 #include "InetAddress.h"
-#include <boost/noncopyable.hpp>
+#include "noncopyable.h"
 
 #include <functional>
 #include <memory>
 
-class Channel;
-class EventLoop;
-
-class Connector : boost::noncopyable, public std::enable_shared_from_this<Connector>
+namespace networker
 {
-    public:
-        typedef std::function<void (int sockfd)> NewConnectionCallback;
-    
-    private:
-        enum States {kDisconnected, kConnecting, kConnected};   // 未连接，连接中，已连接
-        static const int kMaxRetryDelayMs = 30 * 1000;
-        static const int kInitRetryDelayMs = 500;
+namespace net
+{
+    class Channel;
+    class EventLoop;
 
-        EventLoop *loop_;
-        InetAddress serverAddr_;
-        bool connect_;  // atomic
-        States state_;
-        std::unique_ptr<Channel> channel_;
-        NewConnectionCallback newConnectionCallback_;
-        int retryDelayMs_;
-    
-    public:
-        Connector(EventLoop *loop, const InetAddress& serverAddr);
+    class Connector : noncopyable, public std::enable_shared_from_this<Connector>
+    {
+        public:
+            typedef std::function<void (int sockfd)> NewConnectionCallback;
+        
+        private:
+            enum States {kDisconnected, kConnecting, kConnected};   // 未连接，连接中，已连接
+            static const int kMaxRetryDelayMs = 30 * 1000;
+            static const int kInitRetryDelayMs = 500;
 
-        ~Connector();
+            EventLoop *loop_;
+            InetAddress serverAddr_;
+            bool connect_;  // atomic
+            States state_;
+            std::unique_ptr<Channel> channel_;
+            NewConnectionCallback newConnectionCallback_;
+            int retryDelayMs_;
+        
+        public:
+            Connector(EventLoop *loop, const InetAddress& serverAddr);
 
-        void setNewConnectionCallback(const NewConnectionCallback& cb)
-        {
-            newConnectionCallback_ = cb;
-        }
+            ~Connector();
 
-        const InetAddress& serverAddress() const 
-        { 
-            return serverAddr_;
-        }
+            void setNewConnectionCallback(const NewConnectionCallback& cb)
+            {
+                newConnectionCallback_ = cb;
+            }
 
-        void start();   // 可以在任何线程中调用
+            const InetAddress& serverAddress() const 
+            { 
+                return serverAddr_;
+            }
 
-        void restart(); // 必须在loop线程中调用
+            void start();   // 可以在任何线程中调用
 
-        void stop();   // 可以在任何线程中调用
+            void restart(); // 必须在loop线程中调用
 
-    private:
-        void setState(States s)
-        {
-            state_ = s;
-        }
+            void stop();   // 可以在任何线程中调用
 
-        void startInLoop();
+        private:
+            void setState(States s)
+            {
+                state_ = s;
+            }
 
-        void stopInLoop();
+            void startInLoop();
 
-        void connect();
+            void stopInLoop();
 
-        void connecting(int sockfd);
+            void connect();
 
-        void handleWrite();
+            void connecting(int sockfd);
 
-        void handleError();
+            void handleWrite();
 
-        void retry(int sockfd);
+            void handleError();
 
-        int removeAndResetChannel();
+            void retry(int sockfd);
 
-        void resetChannel();
+            int removeAndResetChannel();
+
+            void resetChannel();
+    };
+};
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include "EventLoopThread.h"
 #include "EventLoop.h"
 
+using namespace networker;
+using namespace networker::net;
 
 EventLoopThread::EventLoopThread(const ThreadInitCallback& cb, const string& name)
     :loop_(NULL), exiting_(false), thread_(std::bind(&EventLoopThread::threadFunc, this), name),

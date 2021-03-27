@@ -11,6 +11,11 @@
 #include <unistd.h>
 #include <stdio.h>
 
+using namespace networker;
+using namespace networker::net;
+
+namespace 
+{
 __thread EventLoop *t_loopInThisThread = 0;
 
 const int kPollTimeMs = 10000;
@@ -37,7 +42,7 @@ class IgnoreSigPipe
 #pragma GCC diagnostic error "-Wold-style-cast"
 
 IgnoreSigPipe initObj;
-
+};
 /**
  * 每个线程至多有一个EventLoop对象，那么使用getEventLoopOfCurrentThread返回这个对象
  * 如果当前线程不是IO线程，返回值为NULL

@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <sys/uio.h>
 
+using namespace networker;
+using namespace networker::net;
+
 const char Buffer::kCRLF[] = "\r\n";
 
 const size_t Buffer::kCheapPrepend;

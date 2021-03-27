@@ -4,33 +4,41 @@
 #include "Condition.h"
 #include "MutexLock.h"
 #include "Thread.h"
-#include <boost/noncopyable.hpp>
 
-class EventLoop;
 
-class EventLoopThread: boost::noncopyable
+namespace networker
 {
-    public:
-        typedef std::function<void(EventLoop*)> ThreadInitCallback;
+namespace net
+{
+    class EventLoop;
 
-    private:
-        EventLoop *loop_;
-        bool exiting_;
-        Thread thread_;
-        MutexLock mutex_;
+    class EventLoopThread: noncopyable
+    {
+        public:
+            typedef std::function<void(EventLoop*)> ThreadInitCallback;
 
-        Condition cond_;
-        ThreadInitCallback callback_;
-    
-    public:
-        EventLoopThread(const ThreadInitCallback& cb = ThreadInitCallback(), const string& name = string());
+        private:
+            EventLoop *loop_;
+            bool exiting_;
+            Thread thread_;
+            MutexLock mutex_;
 
-        ~EventLoopThread();
+            Condition cond_;
+            ThreadInitCallback callback_;
+        
+        public:
+            EventLoopThread(const ThreadInitCallback& cb = ThreadInitCallback(), const string& name = string());
 
-        EventLoop *startLoop();
-    
-    private:
-        void threadFunc();
+            ~EventLoopThread();
+
+            EventLoop *startLoop();
+        
+        private:
+            void threadFunc();
+    };
 };
+};
+
+
 
 #endif
