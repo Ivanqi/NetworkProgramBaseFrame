@@ -6,6 +6,9 @@
 #include <errno.h>
 #include <stdio.h>
 
+using namespace networker;
+using namespace networker::net;
+
 const int Connector::kMaxRetryDelayMs;
 
 Connector::Connector(EventLoop *loop, const InetAddress& serverAddr)

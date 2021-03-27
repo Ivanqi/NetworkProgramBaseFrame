@@ -3,7 +3,7 @@
 
 
 #include "InetAddress.h"
-#include "noncopyable.h"
+#include "networker/base/noncopyable.h"
 
 #include <functional>
 #include <memory>

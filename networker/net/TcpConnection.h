@@ -1,8 +1,8 @@
 #ifndef NETWORKER_NET_TCPCONNECTION
 #define NETWORKER_NET_TCPCONNECTION
 
-#include "StringPiece.h"
-#include "Types.h"
+#include "networker/base/StringPiece.h"
+#include "networker/base/Types.h"
 #include "Callbacks.h"
 #include "Buffer.h"
 #include "InetAddress.h"

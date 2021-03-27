@@ -1,9 +1,9 @@
 #ifndef NETWORKER_NET_EVENTLOOPTHREAD_H
 #define NETWORKER_NET_EVENTLOOPTHREAD_H
 
-#include "Condition.h"
-#include "MutexLock.h"
-#include "Thread.h"
+#include "networker/base/Condition.h"
+#include "networker/base/MutexLock.h"
+#include "networker/base/Thread.h"
 
 
 namespace networker

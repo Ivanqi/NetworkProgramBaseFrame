@@ -6,6 +6,9 @@
 #include <assert.h>
 #include <stdio.h>
 
+using namespace networker;
+using namespace networker::net;
+
 const int Channel::kNoneEvent = 0;
 const int Channel::kReadEvent = POLLIN | POLLPRI;
 const int Channel::kWriteEvent = POLLOUT;

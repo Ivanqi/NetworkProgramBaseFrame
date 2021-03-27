@@ -5,6 +5,14 @@
 
 #include <stdio.h>  // snprintf
 
+
+using namespace networker;
+using namespace networker::net;
+
+namespace networker
+{
+namespace net
+{
 namespace detail 
 {
     void removeConnection(EventLoop *loop, const TcpConnectionPtr& conn)
@@ -17,6 +25,8 @@ namespace detail
 
     }
 }
+};
+};
 
 TcpClient::TcpClient(EventLoop *loop, const InetAddress& serverAddr, const string& nameArg)
     :loop_(loop), connector_(new Connector(loop, serverAddr)), name_(nameArg),

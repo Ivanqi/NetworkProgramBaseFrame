@@ -4,8 +4,8 @@
 #include <set>
 #include <vector>
 
-#include "MutexLock.h"
-#include "Timestamp.h"
+#include "networker/base/MutexLock.h"
+#include "networker/base/Timestamp.h"
 #include "Callbacks.h"
 #include "Channel.h"
 

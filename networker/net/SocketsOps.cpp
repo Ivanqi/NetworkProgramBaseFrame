@@ -1,6 +1,8 @@
-#include "SocketsOps.h"
-#include "Types.h"
-#include "Endian.h"
+#include "networker/net/SocketsOps.h"
+#include "networker/net/Endian.h"
+#include "networker/base/Logging.h"
+#include "networker/base/Types.h"
+
 
 #include <errno.h>
 #include <fcntl.h>
@@ -9,20 +11,27 @@
 #include <unistd.h>
 #include <assert.h>
 
-void setNonBlockAndCloseOnExec(int sockfd)
+using namespace networker;
+using namespace networker::net;
+
+namespace
 {
-    // non-block
-    int flags = ::fcntl(sockfd, F_GETFL, 0);
-    flags |= O_NONBLOCK;
-    int ret = ::fcntl(sockfd, F_SETFL, flags);
+    void setNonBlockAndCloseOnExec(int sockfd)
+    {
+        // non-block
+        int flags = ::fcntl(sockfd, F_GETFL, 0);
+        flags |= O_NONBLOCK;
+        int ret = ::fcntl(sockfd, F_SETFL, flags);
 
-    // close-on-exec
-    flags = ::fcntl(sockfd, F_GETFD, 0);
-    flags |= FD_CLOEXEC;
-    ret = ::fcntl(sockfd, F_SETFD, flags);
+        // close-on-exec
+        flags = ::fcntl(sockfd, F_GETFD, 0);
+        flags |= FD_CLOEXEC;
+        ret = ::fcntl(sockfd, F_SETFD, flags);
 
-    (void) ret;
-}
+        (void) ret;
+    }
+};
+
 
 // sockaddr_in6转换为sockaddr，给操作系统使用
 const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in6* addr)
@@ -82,13 +91,17 @@ int sockets::createNonblockingOrDie(sa_family_t family)
 void sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
 {
     int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
-    assert(ret != -1);
+    if (ret < 0) {
+        LOG_SYSFATAL << "sockets::bindOrDie";
+    }
 }
 
 void sockets::listenOrDie(int sockfd)
 {
     int ret = ::listen(sockfd, SOMAXCONN);
-    assert(ret != -1);
+    if (ret < 0) {
+        LOG_SYSFATAL << "sockets::listenOrDie";
+    }
 }
 
 int sockets::accept(int sockfd, struct sockaddr_in6* addr)
@@ -215,7 +228,9 @@ void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in* addr
      * 如果af不包含有效的地址族，则返回-1并errno设置为EAFNOSUPPORT。
      */
     int ret = ::inet_pton(AF_INET, ip, &addr->sin_addr);
-    assert(ret == 1);
+    if (ret <= 0) {
+        LOG_SYSERR << "sockets::fromIpPort";
+    }
 }
 
 void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* addr)
@@ -247,7 +262,10 @@ struct sockaddr_in6 sockets::getLocalAddr(int sockfd)
 
     // getsockname（）返回套接字sockfd的当前地址。绑定在addr指向的缓冲区中
     // 成功时，返回0。发生错误时，返回-1，错误原因存于errno中
-    assert (::getsockname(sockfd, sockaddr_cast(&localaddr), &addrlen) != -1);
+    int ret = ::getsockname(sockfd, sockaddr_cast(&localaddr), &addrlen);
+    if (ret < 0) {
+        LOG_SYSERR << "sockets::getLocalAddr";
+    }
     return localaddr;
 }
 
@@ -259,7 +277,10 @@ struct sockaddr_in6 sockets::getPeerAddr(int sockfd)
 
     // getpeername() 返回连接到套接字的对端的地址 sockfd，绑定在addr指向的缓冲区中。相当于客户端地址
     // 成功时，返回0。发生错误时，返回-1，错误原因存于errno中。
-    assert(::getpeername(sockfd, sockaddr_cast(&peeraddr), &addrlen) == 0);
+    int ret = ::getpeername(sockfd, sockaddr_cast(&peeraddr), &addrlen);
+    if (ret < 0) {
+        LOG_SYSERR << "sockets::getPeerAddr";
+    }
     return peeraddr;
 }
 

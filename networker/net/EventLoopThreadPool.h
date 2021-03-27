@@ -1,7 +1,8 @@
 #ifndef NETWORKER_NET_EVENTLOOPTHREADPOOL_H
 #define NETWORKER_NET_EVENTLOOPTHREADPOOL_H
 
-#include "Types.h"
+#include "networker/base/Types.h"
+#include "networker/base/noncopyable.h"
 
 #include <functional>
 #include <memory>

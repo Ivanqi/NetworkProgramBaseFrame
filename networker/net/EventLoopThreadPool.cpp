@@ -3,6 +3,9 @@
 #include "EventLoopThread.h"
 #include "stdio.h"
 
+using namespace networker;
+using namespace networker::net;
+
 EventLoopThreadPool::EventLoopThreadPool(EventLoop *baseLoop, const string& nameArg)
     :baseLoop_(baseLoop), name_(nameArg), started_(false),
     numThreads_(0), next_(0)
