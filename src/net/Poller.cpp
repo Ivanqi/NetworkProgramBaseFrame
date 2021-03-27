@@ -1,6 +1,9 @@
 #include "Poller.h"
 #include "Channel.h"
 
+using namespace networker;
+using namespace networker::net;
+
 Poller::Poller(EventLoop *loop): ownerLoop_(loop)
 {
 }

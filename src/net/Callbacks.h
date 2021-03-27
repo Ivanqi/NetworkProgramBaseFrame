@@ -1,5 +1,5 @@
-#ifndef EVENT_CALLBACKS_H
-#define EVENT_CALLBACKS_H
+#ifndef NETWORKER_NET_CALLBACKS_H
+#define NETWORKER_NET_CALLBACKS_H
 
 #include "Timestamp.h"
 

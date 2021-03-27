@@ -1,5 +1,5 @@
-#ifndef EVENT_ACCEPTOR_H
-#define EVENT_ACCEPTOR_H
+#ifndef NETWORKER_NET_ACCEPTOR_H
+#define NETWORKER_NET_ACCEPTOR_H
 
 #include <functional>
 

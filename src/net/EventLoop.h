@@ -1,5 +1,5 @@
-#ifndef EVENT_EVENTLOOP_H
-#define EVENT_EVENTLOOP_H
+#ifndef NETWORKER_NET_EVENTLOOP_H
+#define NETWORKER_NET_EVENTLOOP_H
 
 #include <atomic>
 #include <functional>

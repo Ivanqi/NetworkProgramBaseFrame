@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <errno.h>
 
+using namespace networker;
+using namespace networker::net;
+
 void defaultConnectionCallback(const TcpConnectionPtr& conn)
 {
     string connectState = conn->connected() ? "UP" : "DOWN";

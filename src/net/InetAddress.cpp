@@ -28,6 +28,8 @@ static_assert(offsetof(sockaddr_in, sin_port) == 2, "sin_port offset 2");
 
 static_assert(offsetof(sockaddr_in6, sin6_port) == 2, "sin6_port offset 2");
 
+using namespace networker;
+using namespace networker::net;
 
 InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6)
 {

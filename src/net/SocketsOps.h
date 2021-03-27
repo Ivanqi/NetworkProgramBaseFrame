@@ -1,8 +1,12 @@
-#ifndef EVENT_SOCKETSOPS_H
-#define EVENT_SOCKETSOPS_H
+#ifndef NETWORKER_NET_SOCKETSOPS_H
+#define NETWORKER_NET_SOCKETSOPS_H
 
 #include <arpa/inet.h>
 
+namespace networker
+{
+namespace net
+{
 namespace sockets
 {
 
@@ -52,6 +56,8 @@ struct sockaddr_in6 getPeerAddr(int sockfd);
 
 bool isSelfConnect(int sockfd);
 
+};
+};
 };
 
 #endif

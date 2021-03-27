@@ -1,89 +1,95 @@
-#ifndef EVENT_TCPCLIENT_H
-#define EVENT_TCPCLIENT_H
+#ifndef NETWORKER_NET_TCPCLIENT_H
+#define NETWORKER_NET_TCPCLIENT_H
 
 #include "MutexLock.h"
 #include "TcpConnection.h"
 
-class Connector;
-typedef std::shared_ptr<Connector> ConnectorPtr;
-
-/**
- * TcpClient具备TcpConnection断开重连的功能，加上Connector具有反复尝试连接的功能，因此客户端和服务端的启动顺序无关紧要
- */
-class TcpClient
+namespace networker
 {
-    private:
-        EventLoop *loop_;
-        ConnectorPtr connector_;    // 避免露出Connector
-        const string name_;         
-        ConnectionCallback connectionCallback_;
-        MessageCallback messageCallback_;
-        WriteCompleteCallback writeCompleteCallback_;
+namespace net
+{
+    class Connector;
+    typedef std::shared_ptr<Connector> ConnectorPtr;
 
-        bool retry_;    // atomic
-        bool connect_;  // atomic
+    /**
+     * TcpClient具备TcpConnection断开重连的功能，加上Connector具有反复尝试连接的功能，因此客户端和服务端的启动顺序无关紧要
+     */
+    class TcpClient
+    {
+        private:
+            EventLoop *loop_;
+            ConnectorPtr connector_;    // 避免露出Connector
+            const string name_;         
+            ConnectionCallback connectionCallback_;
+            MessageCallback messageCallback_;
+            WriteCompleteCallback writeCompleteCallback_;
 
-        // always in loop thread
-        int nextConnId_;
-        mutable MutexLock mutex_;
+            bool retry_;    // atomic
+            bool connect_;  // atomic
 
-        TcpConnectionPtr connection_;
+            // always in loop thread
+            int nextConnId_;
+            mutable MutexLock mutex_;
 
-    public:
-        TcpClient(EventLoop *loop, const InetAddress& serverAddr, const string& nameArg);
+            TcpConnectionPtr connection_;
 
-        ~TcpClient();
+        public:
+            TcpClient(EventLoop *loop, const InetAddress& serverAddr, const string& nameArg);
 
-        void connect();
+            ~TcpClient();
 
-        void disconnect();
+            void connect();
 
-        void stop();
+            void disconnect();
 
-        TcpConnectionPtr connection() const
-        {
-            MutexLockGuard lock(mutex_);
-            return connection_;
-        }
+            void stop();
 
-        EventLoop *getLoop() const
-        {
-            return loop_;
-        }
+            TcpConnectionPtr connection() const
+            {
+                MutexLockGuard lock(mutex_);
+                return connection_;
+            }
 
-        bool retry() const
-        {
-            return retry_;
-        }
+            EventLoop *getLoop() const
+            {
+                return loop_;
+            }
 
-        void enableRetry()
-        {
-            retry_ = true;
-        }
+            bool retry() const
+            {
+                return retry_;
+            }
 
-        const string& name() const
-        {
-            return name_;
-        }
+            void enableRetry()
+            {
+                retry_ = true;
+            }
 
-        // 设置message回调。不是线程安全
-        void setMessageCallback(MessageCallback cb)
-        {
-            messageCallback_ = std::move(cb);
-        }
+            const string& name() const
+            {
+                return name_;
+            }
 
-        // 设置 write complete 回调。不是线程安全
-        void setWriteCompleteCallback(WriteCompleteCallback cb)
-        {
-            writeCompleteCallback_ = std::move(cb);
-        }
-    
-    private:
-        // Not thread safe, but in loop
-        void newConnection(int sockfd);
+            // 设置message回调。不是线程安全
+            void setMessageCallback(MessageCallback cb)
+            {
+                messageCallback_ = std::move(cb);
+            }
 
-        // Not thread safe, but in loop
-        void removeConnection(const TcpConnectionPtr& conn);
+            // 设置 write complete 回调。不是线程安全
+            void setWriteCompleteCallback(WriteCompleteCallback cb)
+            {
+                writeCompleteCallback_ = std::move(cb);
+            }
+        
+        private:
+            // Not thread safe, but in loop
+            void newConnection(int sockfd);
+
+            // Not thread safe, but in loop
+            void removeConnection(const TcpConnectionPtr& conn);
+    };
+};
 };
 
 #endif

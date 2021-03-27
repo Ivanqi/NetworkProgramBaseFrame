@@ -1,5 +1,5 @@
-#ifndef EVENT_EVENTLOOPTHREAD_H
-#define EVENT_EVENTLOOPTHREAD_H
+#ifndef NETWORKER_NET_EVENTLOOPTHREAD_H
+#define NETWORKER_NET_EVENTLOOPTHREAD_H
 
 #include "Condition.h"
 #include "MutexLock.h"

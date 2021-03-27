@@ -1,5 +1,5 @@
-#ifndef EVENT_CHANNEL_H
-#define EVENT_CHANNEL_H
+#ifndef NETWORKER_NET_CHANNEL_H
+#define NETWORKER_NET_CHANNEL_H
 
 #include "Timestamp.h"
 #include <functional>

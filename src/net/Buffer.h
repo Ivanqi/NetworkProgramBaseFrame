@@ -1,5 +1,5 @@
-#ifndef EVENT_BUFFER_H
-#define EVENT_BUFFER_H
+#ifndef NETWORKER_NET_BUFFER_H
+#define NETWORKER_NET_BUFFER_H
 
 #include "StringPiece.h"
 #include "Types.h"

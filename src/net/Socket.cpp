@@ -6,6 +6,9 @@
 #include <netinet/tcp.h>
 #include <stdio.h>  // snprintf
 
+using namespace networker;
+using namespace networker::net;
+
 Socket::~Socket()
 {
     sockets::close(sockfd_);

@@ -1,5 +1,5 @@
-#ifndef EVENT_ENDIAN_H
-#define EVENT_ENDIAN_H
+#ifndef NETWORKER_NET_ENDIAN_H
+#define NETWORKER_NET_ENDIAN_H
 
 #include <stdint.h>
 #include <endian.h>

@@ -1,5 +1,5 @@
-#ifndef EVENT_CONNECTOR_H
-#define EVENT_CONNECTOR_H
+#ifndef NETWORKER_NET_CONNECTOR_H
+#define NETWORKER_NET_CONNECTOR_H
 
 
 #include "InetAddress.h"

@@ -5,6 +5,8 @@
 #include "SocketsOps.h"
 
 #include <stdio.h>  // snprintf
+using namespace networker;
+using namespace networker::net;
 
 TcpServer::TcpServer(EventLoop *loop, const InetAddress& listenAddr, const string& nameArg, Option option)
     :loop_(loop), ipPort_(listenAddr.toIpPort()), name_(nameArg),
