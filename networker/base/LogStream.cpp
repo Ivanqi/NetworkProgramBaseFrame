@@ -7,7 +7,7 @@
 
 #include "LogStream.h"
 
-namespace network
+namespace networker
 {
     const char digits[] = "9876543210123456789";
     const char* zero = digits + 9;

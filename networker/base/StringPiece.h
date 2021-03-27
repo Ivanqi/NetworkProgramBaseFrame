@@ -172,5 +172,5 @@ namespace networker
 };
 
 // allow StringPiece to be logged
-std::ostream& operator<<(std::ostream& o, const StringPiece& piece);
+std::ostream& operator<<(std::ostream& o, const networker::StringPiece& piece);
 #endif

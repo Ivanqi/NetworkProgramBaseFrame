@@ -1,7 +1,7 @@
 #ifndef NETWORKER_NET_INTERADDRESS_H
 #define NETWORKER_NET_INTERADDRESS_H
 
-#include "StringPiece.h"
+#include "networker/base/StringPiece.h"
 #include "SocketsOps.h"
 #include <netinet/in.h>
 

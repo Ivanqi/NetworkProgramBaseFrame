@@ -1,6 +1,6 @@
 #ifndef NETWORKER_NET_SOCKET_H
 #define NETWORKER_NET_SOCKET_H
-#include "noncopyable.h"
+#include "networker/base/noncopyable.h"
 
 // struct tcp_info is in <netinet/tcp.h>
 struct tcp_info;

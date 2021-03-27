@@ -1,6 +1,8 @@
 #ifndef NETWORKER_NET_TIMERID_H
 #define NETWORKER_NET_TIMERID_H
 
+namespace networker
+{
 namespace net
 {
     class Timer;

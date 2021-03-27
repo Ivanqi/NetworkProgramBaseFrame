@@ -1,8 +1,8 @@
 #ifndef NETWORKER_NET_BUFFER_H
 #define NETWORKER_NET_BUFFER_H
 
-#include "StringPiece.h"
-#include "Types.h"
+#include "networker/base/StringPiece.h"
+#include "networker/base/Types.h"
 #include "Endian.h"
 
 #include <algorithm>

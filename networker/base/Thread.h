@@ -2,7 +2,6 @@
 #define NETWORKER_BASE_THREAD_H
 
 
-#include <Types.h>
 #include <functional>
 #include <memory>
 #include <pthread.h>
@@ -11,6 +10,7 @@
 
 #include "Atomic.h"
 #include "CountDownLatch.h"
+#include "Types.h"
 
 namespace networker
 {

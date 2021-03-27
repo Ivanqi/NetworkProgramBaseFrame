@@ -13,7 +13,6 @@
 
 namespace networker
 {
-    using namespace std;
     struct Transition
     {
         time_t gmttime;
@@ -71,8 +70,23 @@ namespace networker
         utc->tm_hour = minutes / 60;
     }
 
-    const int kSecondsPerDay = 24 * 60 * 60;
 
+    const int kSecondsPerDay = 24 * 60 * 60;
+};
+
+using namespace networker;
+using namespace std;
+
+struct TimeZone::Data
+{
+    vector<Transition> transitions; // 时间翻译数组
+    vector<Localtime> localtimes;   // 本地时间数组
+    vector<string> names;   // 名称数组
+    string abbreviation;    // 缩写
+};
+
+namespace networker
+{
     class File
     {
         private:
@@ -245,13 +259,6 @@ namespace networker
 };
 
 
-struct TimeZone::Data
-{
-    vector<Transition> transitions; // 时间翻译数组
-    vector<Localtime> localtimes;   // 本地时间数组
-    vector<string> names;   // 名称数组
-    string abbreviation;    // 缩写
-};
 
 TimeZone::TimeZone(const char* zonefile): data_(new TimeZone::Data)
 {
