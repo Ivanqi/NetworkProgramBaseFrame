@@ -8,6 +8,9 @@
 #include <poll.h>
 #include <stdio.h>
 
+using namespace networker;
+using namespace networker::net;
+
 PollPoller::PollPoller(EventLoop *loop): Poller(loop)
 {
 

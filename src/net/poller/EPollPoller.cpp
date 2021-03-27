@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
+using namespace networker;
+using namespace networker::net;
+
 // 在Linux上，poll（2）和epoll（4）的常量应该相同
 static_assert(EPOLLIN == POLLIN,        "epoll uses same flag values as poll");
 static_assert(EPOLLPRI == POLLPRI,      "epoll uses same flag values as poll");

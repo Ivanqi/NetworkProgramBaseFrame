@@ -1,5 +1,5 @@
-#ifndef EVENT_EPOLLPOLLER_H
-#define EVENT_EPOLLPOLLER_H
+#ifndef NETWORKER_NET_POLLER_EPOLLPOLLER_H
+#define NETWORKER_NET_POLLER_EPOLLPOLLER_H
 
 #include "Poller.h"
 
@@ -7,34 +7,41 @@
 
 struct epoll_event;
 
-// IO Multiplexing with epoll(4).
-class EPollPoller: public Poller
+namespace networker
 {
-    private:
-        typedef std::vector<struct epoll_event> EventList;
+namespace net
+{
+    // IO Multiplexing with epoll(4).
+    class EPollPoller: public Poller
+    {
+        private:
+            typedef std::vector<struct epoll_event> EventList;
 
-        int epollfd_;
+            int epollfd_;
 
-        EventList events_;
+            EventList events_;
 
-    public:
-        EPollPoller(EventLoop *loop);
+        public:
+            EPollPoller(EventLoop *loop);
 
-        ~EPollPoller() override;
+            ~EPollPoller() override;
 
-        Timestamp poll(int timeoutMs, ChannelList *activeChannels) override;
+            Timestamp poll(int timeoutMs, ChannelList *activeChannels) override;
 
-        void updateChannel(Channel *channel) override;
-        void removeChannel(Channel *channel) override;
-    
-    private:
-        static const int kInitEventListSize = 26;
+            void updateChannel(Channel *channel) override;
+            void removeChannel(Channel *channel) override;
+        
+        private:
+            static const int kInitEventListSize = 26;
 
-        static const char* operationToString(int op);
+            static const char* operationToString(int op);
 
-        void fillActiveChannels(int numEvents, ChannelList* activeChannels) const;
+            void fillActiveChannels(int numEvents, ChannelList* activeChannels) const;
 
-        void update(int operation, Channel *channel);
+            void update(int operation, Channel *channel);
+    };
 };
+};
+
 
 #endif
