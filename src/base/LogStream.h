@@ -6,180 +6,183 @@
 #include <string>
 #include <boost/noncopyable.hpp>
 
-const int kSmallBuffer = 4000;
-const int kLargeBuffer = 4000 * 1000;
-
-template<int SIZE> 
-class FixedBuffer : boost::noncopyable 
+namespace networker
 {
-    private:
-        char data_[SIZE];
-        char* cur_;
+    const int kSmallBuffer = 4000;
+    const int kLargeBuffer = 4000 * 1000;
 
-    public:
-        FixedBuffer()
-            :cur_(data_)
-        {}
+    template<int SIZE> 
+    class FixedBuffer : boost::noncopyable 
+    {
+        private:
+            char data_[SIZE];
+            char* cur_;
 
-        ~FixedBuffer() {}
+        public:
+            FixedBuffer()
+                :cur_(data_)
+            {}
 
-        void append(const char* buf, size_t len) 
-        {
-            if (avail() > static_cast<int>(len)) {
-                memcpy(cur_, buf, len);
+            ~FixedBuffer() {}
+
+            void append(const char* buf, size_t len) 
+            {
+                if (avail() > static_cast<int>(len)) {
+                    memcpy(cur_, buf, len);
+                    cur_ += len;
+                }
+            }
+
+            const char* data() const 
+            {
+                return data_;
+            }
+
+            int length() const 
+            {
+                return static_cast<int>(cur_ - data_);
+            }
+
+            char* current() 
+            {
+                return cur_;
+            }
+
+            int avail() const 
+            {
+                const char* end_ = end();
+                return static_cast<int>(end_ - cur_);
+            }
+
+            void add(size_t len) 
+            {
                 cur_ += len;
             }
-        }
 
-        const char* data() const 
-        {
-            return data_;
-        }
-
-        int length() const 
-        {
-            return static_cast<int>(cur_ - data_);
-        }
-
-        char* current() 
-        {
-            return cur_;
-        }
-
-        int avail() const 
-        {
-            const char* end_ = end();
-            return static_cast<int>(end_ - cur_);
-        }
-
-        void add(size_t len) 
-        {
-            cur_ += len;
-        }
-
-        void reset() 
-        {
-            cur_ = data_;
-        }
-
-        void bzero() 
-        {
-            memset(data_, 0, sizeof(data_));
-        }
-
-    private:
-        const char* end() const {
-            const char* ret = data_ + sizeof(data_);
-            return ret;
-        }
-};
-
-
-class LogStream: boost::noncopyable
-{
-    public:
-        typedef FixedBuffer<kSmallBuffer> Buffer;
-    private:
-        Buffer buffer_;
-
-    public:
-        LogStream& operator<<(bool v)
-        {
-            buffer_.append(v ? "1" : "0", 1);
-            return *this;
-        }
-
-        LogStream& operator<<(short);
-        LogStream& operator<<(unsigned short);
-        LogStream& operator<<(int);
-        LogStream& operator<<(unsigned int);
-        LogStream& operator<<(long);
-        LogStream& operator<<(unsigned long);
-        LogStream& operator<<(long long);
-        LogStream& operator<<(unsigned long long);
-        
-        LogStream& operator<<(const void*);
-
-        LogStream& operator<<(float v) 
-        {
-            *this << static_cast<double>(v);
-            return *this;
-        }
-
-        LogStream& operator<<(double);
-        LogStream& operator<<(long double);
-
-        LogStream& operator<<(char v) 
-        {
-            buffer_.append(&v, 1);
-            return *this;
-        }
-
-        LogStream& operator<<(const char* str) 
-        {
-            if (str) {
-                buffer_.append(str, strlen(str));
-            } else {
-                buffer_.append("(null)", 6);
+            void reset() 
+            {
+                cur_ = data_;
             }
-            return *this;
-        }
 
-        LogStream& operator<<(const std::string& v)
-        {
-            buffer_.append(v.c_str(), v.size());
-            return *this;
-        }
+            void bzero() 
+            {
+                memset(data_, 0, sizeof(data_));
+            }
 
-        void append(const char* data, int len)
-        {
-            buffer_.append(data, len);
-        }
+        private:
+            const char* end() const {
+                const char* ret = data_ + sizeof(data_);
+                return ret;
+            }
+    };
 
-        // 返回缓存区
-        const Buffer& buffer() const 
-        {
-            return buffer_;
-        }
 
-        void resetBuffer()
-        {
-            buffer_.reset();
-        }
-    private:
-        void staticCheck();
+    class LogStream: boost::noncopyable
+    {
+        public:
+            typedef FixedBuffer<kSmallBuffer> Buffer;
+        private:
+            Buffer buffer_;
 
-        template<typename T>
-        void formatInteger(T);
+        public:
+            LogStream& operator<<(bool v)
+            {
+                buffer_.append(v ? "1" : "0", 1);
+                return *this;
+            }
 
-        static const int kMaxNumericSize = 32;
+            LogStream& operator<<(short);
+            LogStream& operator<<(unsigned short);
+            LogStream& operator<<(int);
+            LogStream& operator<<(unsigned int);
+            LogStream& operator<<(long);
+            LogStream& operator<<(unsigned long);
+            LogStream& operator<<(long long);
+            LogStream& operator<<(unsigned long long);
+            
+            LogStream& operator<<(const void*);
+
+            LogStream& operator<<(float v) 
+            {
+                *this << static_cast<double>(v);
+                return *this;
+            }
+
+            LogStream& operator<<(double);
+            LogStream& operator<<(long double);
+
+            LogStream& operator<<(char v) 
+            {
+                buffer_.append(&v, 1);
+                return *this;
+            }
+
+            LogStream& operator<<(const char* str) 
+            {
+                if (str) {
+                    buffer_.append(str, strlen(str));
+                } else {
+                    buffer_.append("(null)", 6);
+                }
+                return *this;
+            }
+
+            LogStream& operator<<(const std::string& v)
+            {
+                buffer_.append(v.c_str(), v.size());
+                return *this;
+            }
+
+            void append(const char* data, int len)
+            {
+                buffer_.append(data, len);
+            }
+
+            // 返回缓存区
+            const Buffer& buffer() const 
+            {
+                return buffer_;
+            }
+
+            void resetBuffer()
+            {
+                buffer_.reset();
+            }
+        private:
+            void staticCheck();
+
+            template<typename T>
+            void formatInteger(T);
+
+            static const int kMaxNumericSize = 32;
+    };
+
+    class Fmt
+    {
+        private:
+            char buf_[32];
+            int length_;
+        
+        public:
+            template<typename T>
+            Fmt(const char* fmt, T val);
+
+            const char* data() const
+            {
+                return buf_;
+            }
+
+            int length() const
+            {
+                return length_;
+            }
+    };
+
+    inline LogStream& operator <<(LogStream& s, const Fmt& fmt)
+    {
+        s.append(fmt.data(), fmt.length());
+        return s;
+    }
+
 };
-
-class Fmt
-{
-    private:
-        char buf_[32];
-        int length_;
-    
-    public:
-        template<typename T>
-        Fmt(const char* fmt, T val);
-
-        const char* data() const
-        {
-            return buf_;
-        }
-
-        int length() const
-        {
-            return length_;
-        }
-};
-
-inline LogStream& operator <<(LogStream& s, const Fmt& fmt)
-{
-    s.append(fmt.data(), fmt.length());
-    return s;
-}
-
 #endif

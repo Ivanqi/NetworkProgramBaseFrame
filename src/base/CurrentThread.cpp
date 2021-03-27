@@ -4,7 +4,8 @@
 #include <execinfo.h>
 #include <stdlib.h>
 
-
+namespace networker
+{
 namespace CurrentThread
 {
     __thread int t_cachedTid = 0;
@@ -67,4 +68,5 @@ namespace CurrentThread
 
         return stack;
     }
+};
 };

@@ -1,5 +1,5 @@
-#ifndef LOGGER_PROCESSINFO_H
-#define LOGGER_PROCESSINFO_H
+#ifndef NETWORKER_BASE_PROCESSINFO_H
+#define NETWORKER_BASE_PROCESSINFO_H
 
 #include <vector>
 #include <sys/types.h>
@@ -7,7 +7,8 @@
 #include "Timestamp.h"
 
 using std::string;
-
+namespace networker
+{
 namespace ProcessInfo
 {
     pid_t pid();
@@ -64,5 +65,6 @@ namespace ProcessInfo
     int numThreads();
 
     std::vector<pid_t> threads();
+};
 };
 #endif

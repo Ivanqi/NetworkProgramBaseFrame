@@ -1,52 +1,56 @@
-#ifndef EVENT_CONDITION_H
-#define EVENT_CONDITION_H
+#ifndef NETWORKER_BASE_CONDITION_H
+#define NETWORKER_BASE_CONDITION_H
 
 #include <pthread.h>
 #include <errno.h>
 #include <cstdint>
 #include <time.h>
-#include <boost/noncopyable.hpp>
 #include "MutexLock.h"
 
-class Condition : boost::noncopyable 
+namespace networker
 {
-    private:
-        MutexLock &mutex;
-        pthread_cond_t cond;
+    class Condition : noncopyable 
+    {
+        private:
+            MutexLock &mutex;
+            pthread_cond_t cond;
 
-    public:
-        explicit Condition(MutexLock &_mutex)
-            :mutex(_mutex)
-        {
-            pthread_cond_init(&cond, NULL);
-        }
+        public:
+            explicit Condition(MutexLock &_mutex)
+                :mutex(_mutex)
+            {
+                pthread_cond_init(&cond, NULL);
+            }
 
-        ~Condition() 
-        {
-            pthread_cond_destroy(&cond);
-        }
+            ~Condition() 
+            {
+                pthread_cond_destroy(&cond);
+            }
 
-        void wait() 
-        {
-            pthread_cond_wait(&cond, mutex.get());
-        }
+            void wait() 
+            {
+                pthread_cond_wait(&cond, mutex.get());
+            }
 
-        void notify() 
-        {
-            pthread_cond_signal(&cond);
-        }
+            void notify() 
+            {
+                pthread_cond_signal(&cond);
+            }
 
-        void notifyAll() 
-        {
-            pthread_cond_broadcast(&cond);
-        }
+            void notifyAll() 
+            {
+                pthread_cond_broadcast(&cond);
+            }
 
-        bool waitForSeconds(int seconds) 
-        {
-            struct timespec abstime;
-            clock_gettime(CLOCK_REALTIME, &abstime);
-            abstime.tv_sec += static_cast<time_t>(seconds);
-            return ETIMEDOUT == pthread_cond_timedwait(&cond, mutex.get(), &abstime);
-        }
+            bool waitForSeconds(int seconds) 
+            {
+                struct timespec abstime;
+                clock_gettime(CLOCK_REALTIME, &abstime);
+                abstime.tv_sec += static_cast<time_t>(seconds);
+                return ETIMEDOUT == pthread_cond_timedwait(&cond, mutex.get(), &abstime);
+            }
+    };
 };
+
+
 #endif

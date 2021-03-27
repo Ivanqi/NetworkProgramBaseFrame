@@ -7,29 +7,34 @@
 
 #include "LogStream.h"
 
-const char digits[] = "9876543210123456789";
-const char* zero = digits + 9;
-
-template<typename T>
-size_t convert(char buf[], T value)
+namespace network
 {
-    T i = value;
-    char *p = buf;
+    const char digits[] = "9876543210123456789";
+    const char* zero = digits + 9;
 
-    do {
-        int lsd = static_cast<int>(i % 10);
-        i /= 10;
-        *p++ = zero[lsd];
-    } while (i != 0);
+    template<typename T>
+    size_t convert(char buf[], T value)
+    {
+        T i = value;
+        char *p = buf;
 
-    if (value < 0) {
-        *p++ = '-';
+        do {
+            int lsd = static_cast<int>(i % 10);
+            i /= 10;
+            *p++ = zero[lsd];
+        } while (i != 0);
+
+        if (value < 0) {
+            *p++ = '-';
+        }
+        *p = '\0';
+        std::reverse(buf, p);
+
+        return p - buf;
     }
-    *p = '\0';
-    std::reverse(buf, p);
+};
 
-    return p - buf;
-}
+using namespace networker;
 
 template<typename T>
 void LogStream::formatInteger(T v)

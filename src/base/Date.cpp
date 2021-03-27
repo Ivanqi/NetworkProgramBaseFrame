@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <time.h>
 
+using namespace networker;
+
 char require_32_bit_integer_at_least[sizeof(int) >= sizeof(int32_t) ? 1 : -1];
 
 // 计算儒略日

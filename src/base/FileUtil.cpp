@@ -8,6 +8,8 @@
 #include "FileUtil.h"
 #include "Types.h"
 
+using namespace networker;
+
 AppendFile::AppendFile(std::string filename): fp_(fopen(filename.c_str(), "ae")), writtenBytes_(0)
 {
     // 用户提供缓冲区

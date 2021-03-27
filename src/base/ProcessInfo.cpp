@@ -11,36 +11,41 @@
 #include "CurrentThread.h"
 #include "FileUtil.h"
 
-__thread int t_numOpenedFiles = 0;
-
-int fdDirFilter(const struct dirent *d)
+namespace networker
 {
-    if (::isdigit(d->d_name[0])) {
-        ++t_numOpenedFiles;
+    __thread int t_numOpenedFiles = 0;
+
+    int fdDirFilter(const struct dirent *d)
+    {
+        if (::isdigit(d->d_name[0])) {
+            ++t_numOpenedFiles;
+        }
+        return 0;
     }
-    return 0;
-}
 
-__thread std::vector<pid_t> *t_pids = NULL;
-int taskDirFilter(const struct dirent *d)
-{
-    if (::isdigit(d->d_name[0])) {
-        t_pids->push_back(atoi(d->d_name));
+    __thread std::vector<pid_t> *t_pids = NULL;
+    int taskDirFilter(const struct dirent *d)
+    {
+        if (::isdigit(d->d_name[0])) {
+            t_pids->push_back(atoi(d->d_name));
+        }
+        return 0;
     }
-    return 0;
-}
 
-int scanDir(const char *dirpath, int (*filter)(const struct dirent *))
-{
-    struct dirent **namelist = NULL;
-    int result = ::scandir(dirpath, &namelist, filter, alphasort);
-    assert(namelist == NULL);
-    return result;
-}
+    int scanDir(const char *dirpath, int (*filter)(const struct dirent *))
+    {
+        struct dirent **namelist = NULL;
+        int result = ::scandir(dirpath, &namelist, filter, alphasort);
+        assert(namelist == NULL);
+        return result;
+    }
 
-Timestamp g_startTime = Timestamp::now();
-int g_clockTicks = static_cast<int>(::sysconf(_SC_CLK_TCK));
-int g_pageSize = static_cast<int>(::sysconf(_SC_PAGE_SIZE));
+    Timestamp g_startTime = Timestamp::now();
+    int g_clockTicks = static_cast<int>(::sysconf(_SC_CLK_TCK));
+    int g_pageSize = static_cast<int>(::sysconf(_SC_PAGE_SIZE));
+};
+
+using namespace networker;
 
 pid_t ProcessInfo::pid()
 {

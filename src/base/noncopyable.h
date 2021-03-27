@@ -1,7 +1,7 @@
-#ifndef NETWORK_BASE_NONCOPYABLE_H
-#define NETWORK_BASE_NONCOPYABLE_H
+#ifndef NETWORKER_BASE_NONCOPYABLE_H
+#define NETWORKER_BASE_NONCOPYABLE_H
 
-namespace network
+namespace networker
 {
     class noncopyable
     {

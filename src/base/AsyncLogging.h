@@ -1,5 +1,5 @@
-#ifndef NETWORK_ASYNCLOGGING_H
-#define LOGGER_ASYNCLOGGING_H
+#ifndef NETWORKER_BASE_ASYNCLOGGING_H
+#define NETWORKER_BASE_ASYNCLOGGING_H
 
 #include <functional>
 #include <string>
@@ -10,7 +10,7 @@
 #include "Thread.h"
 #include "LogStream.h"
 
-namespace network
+namespace networker
 {
     class AsyncLogging: noncopyable
     {

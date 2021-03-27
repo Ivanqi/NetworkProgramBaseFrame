@@ -6,6 +6,7 @@
 #include "FileUtil.h"
 #include "ProcessInfo.h"
 
+using namespace networker;
 LogFile::LogFile(const string& basename, off_t rollSize, bool threadSafe, int flushInterval, int checkEveryN)
   : basename_(basename),
     rollSize_(rollSize),

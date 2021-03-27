@@ -7,6 +7,8 @@
 #include "LogFile.h"
 #include "Timestamp.h"
 
+using namespace networker;
+
 AsyncLogging::AsyncLogging(std::string logFileName_, off_t rollSize, int flushInterval)
     :flushInterval_(flushInterval),
     running_(false),

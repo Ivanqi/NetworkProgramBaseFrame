@@ -1,8 +1,11 @@
-#ifndef EVENT_CURRENTTHREAD_H
-#define EVENT_CURRENTTHREAD_H
+#ifndef NETWORKER_BASE_CURRENTTHREAD_H
+#define NETWORKER_BASE_CURRENTTHREAD_H
 
 #include "Types.h"
 #include <stdint.h>
+
+namespace networker
+{
 
 namespace CurrentThread 
 {
@@ -41,5 +44,6 @@ namespace CurrentThread
     void sleepUsec(int64_t usec);  // for testing
 
     string stackTrace(bool demangle);
-}
+};
+};
 #endif

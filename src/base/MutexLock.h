@@ -1,5 +1,5 @@
-#ifndef LOGGER_MUTEXLOCK_H
-#define LOGGER_MUTEXLOCK_H
+#ifndef NETWORKER_BASE_MUTEXLOCK_H
+#define NETWORKER_BASE_MUTEXLOCK_H
 
 #include <pthread.h>
 #include <cstdio>
@@ -7,7 +7,7 @@
 #include "CurrentThread.h"
 #include "noncopyable.h"
 
-namespace network
+namespace networker
 {
     class MutexLock: noncopyable 
     {
