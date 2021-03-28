@@ -42,6 +42,7 @@ TcpClient::~TcpClient()
     bool unique = false;
     {
         MutexLockGuard lock(mutex_);
+        // 防止connection_被其他线程修改
         unique = connection_.unique();
         conn = connection_;
     }
@@ -106,6 +107,7 @@ void TcpClient::newConnection(int sockfd)
 
     conn->setWriteCompleteCallback(writeCompleteCallback_);
 
+    // 不是线程安全
     conn->setCloseCallback(std::bind(&TcpClient::removeConnection, this, _1));
 
     {

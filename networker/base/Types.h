@@ -1,5 +1,5 @@
-#ifndef EVENT_TYPES_H
-#define EVENT_TYPES_H
+#ifndef NETWORKER_BASE_TYPES_H
+#define NETWORKER_BASE_TYPES_H
 
 #include <stdint.h>
 #include <string.h>

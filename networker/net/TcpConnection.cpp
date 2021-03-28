@@ -1,5 +1,6 @@
-#include "TcpConnection.h"
-#include "WeakCallback.h"
+#include "networker/net/TcpConnection.h"
+#include "networker/base/WeakCallback.h"
+#include "networker/base/Logging.h"
 #include "Channel.h"
 #include "EventLoop.h"
 #include "Socket.h"
@@ -8,19 +9,19 @@
 #include <stdio.h>
 #include <errno.h>
 
-using namespace networker;
-using namespace networker::net;
-
-void defaultConnectionCallback(const TcpConnectionPtr& conn)
+void networker::net::defaultConnectionCallback(const TcpConnectionPtr& conn)
 {
     string connectState = conn->connected() ? "UP" : "DOWN";
     printf("%s -> %s is %s\n", conn->localAddress().toIpPort().c_str(), conn->peerAddress().toIpPort().c_str(), connectState.c_str());
 }
 
-void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer *buf, Timestamp)
+void networker::net::defaultMessageCallback(const TcpConnectionPtr& conn, Buffer *buf, Timestamp)
 {
     buf->retrieveAll();
 }
+
+using namespace networker;
+using namespace networker::net;
 
 TcpConnection::TcpConnection(EventLoop *loop, const string& nameArg, int sockfd, const InetAddress& localAddr, const InetAddress& peerAddr)
     :loop_(loop), name_(nameArg), state_(kConnecting), reading_(true), 
@@ -314,10 +315,8 @@ void TcpConnection::handleClose()
 }
 
 // 输出错误信息
-__thread char t_errnobuf[512];
 void TcpConnection::handleError()
 {
     int err = sockets::getSocketError(channel_->fd());
-    const char *errmsg = strerror_r(err, t_errnobuf, sizeof(t_errnobuf));
-    printf("TcpConnection::handleError [ %s ] -  - SO_ERROR = %d, %s", name_.c_str(), err, errmsg);
+    LOG_ERROR << "TcpConnection::handleError [" << name_ << "] - SO_ERROR = " << err << " " << strerror_tl(err);
 }

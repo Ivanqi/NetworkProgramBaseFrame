@@ -1,6 +1,7 @@
 #ifndef NETWORKER_NET_TCPCONNECTION
 #define NETWORKER_NET_TCPCONNECTION
 
+#include "networker/base/noncopyable.h"
 #include "networker/base/StringPiece.h"
 #include "networker/base/Types.h"
 #include "Callbacks.h"
@@ -203,6 +204,9 @@ namespace net
     };
 
     typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+
+    // void defaultConnectionCallback(const TcpConnectionPtr& conn);
+    // void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer *buf, Timestamp);
 };
 };
 #endif
