@@ -4,16 +4,20 @@
 #include "SocketsOps.h"
 
 #include <stdio.h>  // snprintf
+#include <functional>
 
 
 using namespace networker;
 using namespace networker::net;
+using std::placeholders::_1;
+using std::placeholders::_2;
+using std::placeholders::_3;
 
 namespace networker
 {
 namespace net
 {
-namespace detail 
+namespace detail
 {
     void removeConnection(EventLoop *loop, const TcpConnectionPtr& conn)
     {

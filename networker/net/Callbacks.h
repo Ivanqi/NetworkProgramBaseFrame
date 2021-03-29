@@ -38,7 +38,8 @@ namespace networker
 
         return ::std::static_pointer_cast<To>(f);
     }
-
+namespace net
+{
     // 所有客户端可见的回调都在这里
     class Buffer;
     class TcpConnection;
@@ -51,6 +52,7 @@ namespace networker
 
     typedef std::function<void (const TcpConnectionPtr&)> CloseCallback;
 
+
     typedef std::function<void (const TcpConnectionPtr&)> WriteCompleteCallback;
 
     typedef std::function<void (const TcpConnectionPtr&, size_t)> HighWaterMarkCallback;
@@ -61,5 +63,6 @@ namespace networker
     void defaultConnectionCallback(const TcpConnectionPtr& conn);
 
     void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp recviveTime);
+};
 };
 #endif

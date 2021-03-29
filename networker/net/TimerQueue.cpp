@@ -9,75 +9,87 @@
 #include <errno.h>
 #include <iostream>
 
-int createTimerfd()
-{
-    /**
-     * CLOCK_MONOTONIC：从系统启动这一刻起开始计时,不受系统时间被用户改变的影响
-     * TFD_NONBLOCK：非阻塞模式
-     * TFD_CLOEXEC：表示当程序执行exec函数时本fd将被系统自动关闭,表示不传递
-     */
-    int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-    if (timerfd < 0) {
-        printf("Failed in timerfd_create\n");
-    }
-    return timerfd;
-}
 
-struct timespec howMuchTimeFromNow(Timestamp when) 
+namespace networker
 {
-    int64_t microseconds = when.microSecondsSinceEpoch() - Timestamp::now().microSecondsSinceEpoch();
-
-    if (microseconds < 100) {
-        microseconds = 100;
+namespace net
+{
+    int createTimerfd()
+    {
+        /**
+         * CLOCK_MONOTONIC：从系统启动这一刻起开始计时,不受系统时间被用户改变的影响
+         * TFD_NONBLOCK：非阻塞模式
+         * TFD_CLOEXEC：表示当程序执行exec函数时本fd将被系统自动关闭,表示不传递
+         */
+        int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+        if (timerfd < 0) {
+            printf("Failed in timerfd_create\n");
+        }
+        return timerfd;
     }
 
-    struct timespec ts;
-    ts.tv_sec = static_cast<time_t> (microseconds / Timestamp::kMicroSecondsPerSecond);
-    ts.tv_nsec = static_cast<long> ((microseconds % Timestamp::kMicroSecondsPerSecond) * 1000);
+    struct timespec howMuchTimeFromNow(Timestamp when) 
+    {
+        int64_t microseconds = when.microSecondsSinceEpoch() - Timestamp::now().microSecondsSinceEpoch();
 
-    return ts;
-}
+        if (microseconds < 100) {
+            microseconds = 100;
+        }
 
-// 使用epoll监听timer_fd，定时时间到后必须读timerd，不然会一直存在epoll事件，因为timerfd可读
-void readTimerfd(int timerfd, Timestamp now)
-{
-    uint64_t howmany;
-    // timerfd读出来的值一般是1，表示超时次数
-    ssize_t n = ::read(timerfd, &howmany, sizeof(howmany));
+        struct timespec ts;
+        ts.tv_sec = static_cast<time_t> (microseconds / Timestamp::kMicroSecondsPerSecond);
+        ts.tv_nsec = static_cast<long> ((microseconds % Timestamp::kMicroSecondsPerSecond) * 1000);
 
-    if (n != sizeof(howmany)) {
-        printf("TimerQueue::handleRead() reads %zd bytes instead of 8\n", n);
+        return ts;
     }
-}
 
-void resetTimerfd(int timerfd, Timestamp expiration)
-{
-    struct itimerspec newValue;
-    struct itimerspec oldValue;
-    memZero(&newValue, sizeof(newValue));
-    memZero(&oldValue, sizeof(oldValue));
+    // 使用epoll监听timer_fd，定时时间到后必须读timerd，不然会一直存在epoll事件，因为timerfd可读
+    void readTimerfd(int timerfd, Timestamp now)
+    {
+        uint64_t howmany;
+        // timerfd读出来的值一般是1，表示超时次数
+        ssize_t n = ::read(timerfd, &howmany, sizeof(howmany));
 
-    newValue.it_value = howMuchTimeFromNow(expiration);
-
-    /**
-     * int timerfd_settime(int fd, int flags, const struct itimerspec *new_value, struct itimerspec *old_value)
-     * 
-     * flags:
-     *  0: 相对时间
-     *  1: 绝对时间(TFD_TIMER_ABSTIME)
-     * 
-     * new_value：定时器的超时时间以及超时间隔时间
-     * 
-     * old_value：如果不为NULL, old_vlaue返回之前定时器设置的超时时间，具体参考timerfd_gettime()函数
-     * 
-     * 如果flags设置为1，那么epoll监听立马就有事件可读，并且读出的timerfd不是1，因为开机已经过去了很久
-     * 如果设置为0，那么会按照设定的时间定第一个定时器，到时后读出的超时次数是1
-     */
-    int ret = ::timerfd_settime(timerfd, 0, &newValue, &oldValue);
-    if (ret) {
-        printf("timerfd_settime() Error:[%d:%s]\n", errno, strerror(errno));
+        if (n != sizeof(howmany)) {
+            printf("TimerQueue::handleRead() reads %zd bytes instead of 8\n", n);
+        }
     }
-}
+
+    void resetTimerfd(int timerfd, Timestamp expiration)
+    {
+        struct itimerspec newValue;
+        struct itimerspec oldValue;
+        memZero(&newValue, sizeof(newValue));
+        memZero(&oldValue, sizeof(oldValue));
+
+        newValue.it_value = howMuchTimeFromNow(expiration);
+
+        /**
+         * int timerfd_settime(int fd, int flags, const struct itimerspec *new_value, struct itimerspec *old_value)
+         * 
+         * flags:
+         *  0: 相对时间
+         *  1: 绝对时间(TFD_TIMER_ABSTIME)
+         * 
+         * new_value：定时器的超时时间以及超时间隔时间
+         * 
+         * old_value：如果不为NULL, old_vlaue返回之前定时器设置的超时时间，具体参考timerfd_gettime()函数
+         * 
+         * 如果flags设置为1，那么epoll监听立马就有事件可读，并且读出的timerfd不是1，因为开机已经过去了很久
+         * 如果设置为0，那么会按照设定的时间定第一个定时器，到时后读出的超时次数是1
+         */
+        int ret = ::timerfd_settime(timerfd, 0, &newValue, &oldValue);
+        if (ret) {
+            printf("timerfd_settime() Error:[%d:%s]\n", errno, strerror(errno));
+        }
+    }
+};
+};
+
+
+using namespace networker;
+using namespace networker::net;
+
 
 TimerQueue::TimerQueue(EventLoop *loop)
     : loop_(loop), timerfd_(createTimerfd()),  timerfdChannel_(loop, timerfd_), 

@@ -1,8 +1,8 @@
 #ifndef NETWORKER_NET_TIMER_H
 #define NETWORKER_NET_TIMER_H
 
-#include "Atomic.h"
-#include "Timestamp.h"
+#include "networker/base/Atomic.h"
+#include "networker/base/Timestamp.h"
 #include "Callbacks.h"
 
 namespace networker

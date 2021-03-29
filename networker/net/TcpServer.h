@@ -1,8 +1,8 @@
 #ifndef NETWORKER_NET_TCPSERVER_H
 #define NETWORKER_NET_TCPSERVER_H
 
-#include "Atomic.h"
-#include "Types.h"
+#include "networker/base/Atomic.h"
+#include "networker/base/Types.h"
 #include "TcpConnection.h"
 
 #include <map>
