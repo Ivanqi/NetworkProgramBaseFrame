@@ -33,8 +33,9 @@ else
     fi
 
     cd "$include_dir"
-    mv -f ./* "$system_include_dir"
+    cp -rf ./* "$system_include_dir"
     cd ../
+    pwd
 fi
 
 
@@ -48,6 +49,6 @@ else
     fi
 
     cd "$lib_dir"
-    mv -f ./* "$system_lib_dir"
+    cp -rf ./* "$system_lib_dir"
     cd ../
 fi

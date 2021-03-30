@@ -7,7 +7,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
-
+message(STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR})
 message(STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 message(STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
 message(STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH})
@@ -41,9 +41,27 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 # find_path 用来在指定路径中搜索文件名
-find_path(NetWorker_INCLUDE_DIR networker)
-find_path(NetWorker_LIBRARY_DIR libmuduo_net.a HINTS "${NETWORKER_LIB_PATH}/lib")
+find_path(NetWorker_INCLUDE_DIR networker "${NETWORKER_PATH}/include")
+find_path(NetWorker_LIBRARY_DIR NAMES "libnetworker_net.a" "${NETWORKER_LIB_PATH}/lib" PATH_SUFFIXES lib)
 
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${NetWorker_LIBRARY_DIR})
 message(STATUS "NetWorker_INCLUDE_DIR: " ${NetWorker_INCLUDE_DIR})
 message(STATUS "NetWorker_LIBRARY_DIR: " ${NetWorker_LIBRARY_DIR})
+
+# include_directories 将指定目录添加到编译器头文件搜索路径之下，指定的目录被解释成当前源码路径的相对路径
+include_directories(${NetWorker_LIBRARY_DIR})
+
+# find_library 该命令用于搜索动态文件路径，里面的内容为自定义的变量名、动态文件名、具体路径
+find_library(networker_base networker_base)
+find_library(networker_net networker_net)
+message(STATUS ${networker_base})
+message(STATUS ${networker_net})
+
+include_directories(${PROJECT_SOURCE_DIR})
+
+add_executable(echo ./src/echo.cpp)
+
+# target_link_libraries 这个指令可以用来添加需要链接的共享库
+target_link_libraries(echo ${networker_base})
+target_link_libraries(echo ${networker_net})
+target_link_libraries(echo pthread rt)
