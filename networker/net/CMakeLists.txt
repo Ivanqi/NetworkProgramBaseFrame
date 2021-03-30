@@ -46,6 +46,7 @@ set(HEADERS
     TcpConnection.h
     TcpServer.h
     TimerId.h
+    SocketsOps.h
 )
 
 install(FILES ${HEADERS} DESTINATION include/networker/net)

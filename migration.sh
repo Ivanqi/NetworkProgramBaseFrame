@@ -35,7 +35,6 @@ else
     cd "$include_dir"
     cp -rf ./* "$system_include_dir"
     cd ../
-    pwd
 fi
 
 

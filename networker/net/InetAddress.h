@@ -2,7 +2,7 @@
 #define NETWORKER_NET_INTERADDRESS_H
 
 #include "networker/base/StringPiece.h"
-#include "networker/net/SocketsOps.h"
+#include "SocketsOps.h"
 #include <netinet/in.h>
 
 namespace networker
