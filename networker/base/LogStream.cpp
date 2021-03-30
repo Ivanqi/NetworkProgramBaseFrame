@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "LogStream.h"
+#include "networker/base/LogStream.h"
 
 namespace networker
 {

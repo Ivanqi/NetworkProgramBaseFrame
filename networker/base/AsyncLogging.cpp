@@ -3,9 +3,9 @@
 #include <unistd.h>
 #include <functional>
 
-#include "AsyncLogging.h"
-#include "LogFile.h"
-#include "Timestamp.h"
+#include "networker/base/AsyncLogging.h"
+#include "networker/base/LogFile.h"
+#include "networker/base/Timestamp.h"
 
 using namespace networker;
 

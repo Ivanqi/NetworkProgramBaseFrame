@@ -2,7 +2,7 @@
 #define NETWORKER_NET_CONNECTOR_H
 
 
-#include "InetAddress.h"
+#include "networker/net/InetAddress.h"
 #include "networker/base/noncopyable.h"
 
 #include <functional>

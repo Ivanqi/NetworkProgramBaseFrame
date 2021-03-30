@@ -6,8 +6,8 @@
 
 #include "networker/base/MutexLock.h"
 #include "networker/base/Timestamp.h"
-#include "Callbacks.h"
-#include "Channel.h"
+#include "networker/net/Callbacks.h"
+#include "networker/net/Channel.h"
 
 namespace networker
 {

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "LogFile.h"
-#include "FileUtil.h"
-#include "ProcessInfo.h"
+#include "networker/base/LogFile.h"
+#include "networker/base/FileUtil.h"
+#include "networker/base/ProcessInfo.h"
 
 using namespace networker;
 LogFile::LogFile(const string& basename, off_t rollSize, bool threadSafe, int flushInterval, int checkEveryN)

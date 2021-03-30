@@ -7,9 +7,9 @@
 #include <sys/resource.h>
 #include <sys/times.h>
 
-#include "ProcessInfo.h"
-#include "CurrentThread.h"
-#include "FileUtil.h"
+#include "networker/base/ProcessInfo.h"
+#include "networker/base/CurrentThread.h"
+#include "networker/base/FileUtil.h"
 
 namespace networker
 {

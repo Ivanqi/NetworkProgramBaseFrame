@@ -10,8 +10,8 @@
 #include "networker/base/MutexLock.h"
 #include "networker/base/CurrentThread.h"
 #include "networker/base/Timestamp.h"
-#include "Callbacks.h"
-#include "TimerId.h"
+#include "networker/net/Callbacks.h"
+#include "networker/net/TimerId.h"
 
 namespace networker
 {

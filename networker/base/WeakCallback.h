@@ -40,8 +40,4 @@ namespace networker
         return WeakCallback<CLASS, ARGS...>(object, function);
     }
 };
-
-
-
-
 #endif

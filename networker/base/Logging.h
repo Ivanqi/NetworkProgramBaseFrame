@@ -4,9 +4,9 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "LogStream.h"
-#include "Timestamp.h"
-#include "TimeZone.h"
+#include "networker/base/LogStream.h"
+#include "networker/base/Timestamp.h"
+#include "networker/base/TimeZone.h"
 
 namespace networker
 {

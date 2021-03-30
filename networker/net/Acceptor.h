@@ -3,8 +3,8 @@
 
 #include <functional>
 
-#include "Channel.h"
-#include "Socket.h"
+#include "networker/net/Channel.h"
+#include "networker/net/Socket.h"
 
 namespace networker
 {

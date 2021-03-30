@@ -1,7 +1,7 @@
 #ifndef NETWORKER_BASE_CURRENTTHREAD_H
 #define NETWORKER_BASE_CURRENTTHREAD_H
 
-#include "Types.h"
+#include "networker/base/Types.h"
 #include <stdint.h>
 
 namespace networker

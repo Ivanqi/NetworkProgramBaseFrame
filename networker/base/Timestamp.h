@@ -2,7 +2,7 @@
 #define NETWORKER_BASE_TIMESTAMP_H
 
 #include <stdint.h>
-#include "Types.h"
+#include "networker/base/Types.h"
 
 namespace networker
 {

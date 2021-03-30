@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <string.h>
 #include <string>
-#include <boost/noncopyable.hpp>
+#include <networker/base/noncopyable.h>
 
 namespace networker
 {
@@ -12,7 +12,7 @@ namespace networker
     const int kLargeBuffer = 4000 * 1000;
 
     template<int SIZE> 
-    class FixedBuffer : boost::noncopyable 
+    class FixedBuffer : noncopyable 
     {
         private:
             char data_[SIZE];
@@ -77,7 +77,7 @@ namespace networker
     };
 
 
-    class LogStream: boost::noncopyable
+    class LogStream: noncopyable
     {
         public:
             typedef FixedBuffer<kSmallBuffer> Buffer;

@@ -3,9 +3,9 @@
 
 #include <memory>
 
-#include "Types.h"
-#include "MutexLock.h"
-#include "FileUtil.h"
+#include "networker/base/Types.h"
+#include "networker/base/MutexLock.h"
+#include "networker/base/FileUtil.h"
 
 namespace networker
 {

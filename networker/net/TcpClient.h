@@ -2,7 +2,7 @@
 #define NETWORKER_NET_TCPCLIENT_H
 
 #include "networker/base/MutexLock.h"
-#include "TcpConnection.h"
+#include "networker/net/TcpConnection.h"
 
 namespace networker
 {

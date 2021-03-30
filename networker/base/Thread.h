@@ -8,9 +8,9 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#include "Atomic.h"
-#include "CountDownLatch.h"
-#include "Types.h"
+#include "networker/base/Atomic.h"
+#include "networker/base/CountDownLatch.h"
+#include "networker/base/Types.h"
 
 namespace networker
 {

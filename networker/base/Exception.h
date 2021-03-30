@@ -1,6 +1,6 @@
 #ifndef NETWORKER_BASE_EXCEPTION_H
 #define NETWORKER_BASE_EXCEPTION_H
-#include "Types.h"
+#include "networker/base/Types.h"
 #include <exception>
 
 namespace networker

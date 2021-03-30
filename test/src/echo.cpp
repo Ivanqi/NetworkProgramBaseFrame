@@ -2,6 +2,7 @@
 #include "networker/base/AsyncLogging.h"
 #include "networker/base/Logging.h"
 #include "networker/base/Thread.h"
+#include "networker/net/EventLoop.h"
 #include "networker/net/InetAddress.h"
 
 #include <functional>
@@ -76,12 +77,12 @@ int main(int argc, char* argv[]) {
     LOG_INFO << "pid = " << getpid() << ", tid = " << CurrentThread::tid();
 
     EventLoop loop;
-    // InetAddress listenAddr(2007);
-    // EchoServer server(&loop, listenAddr);
+    InetAddress listenAddr(2007);
+    EchoServer server(&loop, listenAddr);
 
-    // server.start();
+    server.start();
 
-    // loop.loop();
+    loop.loop();
 
     return 0;
 }

@@ -2,7 +2,7 @@
 #define NETWORKER_BASE_ATOMIC_H
 
 #include <stdint.h>
-#include "noncopyable.h"
+#include "networker/base/noncopyable.h"
 
 namespace networker
 {

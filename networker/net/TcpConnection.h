@@ -4,9 +4,9 @@
 #include "networker/base/noncopyable.h"
 #include "networker/base/StringPiece.h"
 #include "networker/base/Types.h"
-#include "Callbacks.h"
-#include "Buffer.h"
-#include "InetAddress.h"
+#include "networker/net/Callbacks.h"
+#include "networker/net/Buffer.h"
+#include "networker/net/InetAddress.h"
 
 #include <memory>   // shared_from_this
 #include <any>

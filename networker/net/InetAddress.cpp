@@ -1,6 +1,6 @@
-#include "InetAddress.h"
-#include "Endian.h"
-#include "SocketsOps.h"
+#include "networker/net/InetAddress.h"
+#include "networker/net/Endian.h"
+#include "networker/net/SocketsOps.h"
 
 #include <netdb.h>
 #include <netinet/in.h>

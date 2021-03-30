@@ -4,8 +4,8 @@
 #include <pthread.h>
 #include <cstdio>
 #include <assert.h>
-#include "CurrentThread.h"
-#include "noncopyable.h"
+#include "networker/base/CurrentThread.h"
+#include "networker/base/noncopyable.h"
 
 namespace networker
 {

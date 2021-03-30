@@ -5,10 +5,10 @@
 #include <string>
 #include <vector>
 
-#include "CountDownLatch.h"
-#include "MutexLock.h"
-#include "Thread.h"
-#include "LogStream.h"
+#include "networker/base/CountDownLatch.h"
+#include "networker/base/MutexLock.h"
+#include "networker/base/Thread.h"
+#include "networker/base/LogStream.h"
 
 namespace networker
 {

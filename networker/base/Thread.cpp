@@ -8,10 +8,10 @@
 #include <assert.h>
 #include <iostream>
 
-#include "Thread.h"
-#include "CurrentThread.h"
-#include "Exception.h"
-#include "Timestamp.h"
+#include "networker/base/Thread.h"
+#include "networker/base/CurrentThread.h"
+#include "networker/base/Exception.h"
+#include "networker/base/Timestamp.h"
 
 namespace networker
 {
