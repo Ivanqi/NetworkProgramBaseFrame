@@ -1,11 +1,11 @@
 #include "networker/net/poller/EPollPoller.h"
 #include "networker/net/Channel.h"
+#include "networker/base/Logging.h"
 
 #include <assert.h>
 #include <errno.h>
 #include <poll.h>
 #include <sys/epoll.h>
-#include <stdio.h>
 #include <unistd.h>
 
 using namespace networker;
@@ -26,7 +26,7 @@ const int kDeleted = 2;
 EPollPoller::EPollPoller(EventLoop *loop): Poller(loop), epollfd_(::epoll_create1(EPOLL_CLOEXEC)), events_(kInitEventListSize)
 {
     if (epollfd_ < 0) {
-        printf("EPollPoller::EPollPoller error\n");
+        LOG_SYSFATAL << "EPollPoller::EPollPoller error";
     }
 }
 
@@ -39,7 +39,7 @@ EPollPoller::~EPollPoller()
 
 Timestamp EPollPoller::poll(int timeoutMs, ChannelList *activeChannels)
 {
-    printf("fd total count %zu\n", channels_.size());
+    LOG_TRACE << "fd total count " << channels_.size();
 
     int numEvents = ::epoll_wait(epollfd_,  &*events_.begin(), static_cast<int>(events_.size()), timeoutMs);
 
@@ -48,7 +48,8 @@ Timestamp EPollPoller::poll(int timeoutMs, ChannelList *activeChannels)
     Timestamp now(Timestamp::now());
 
     if (numEvents > 0) {
-        printf("%d events happened\n", numEvents);
+        LOG_TRACE << numEvents << " events happened";
+
         fillActiveChannels(numEvents, activeChannels);
 
         // 扩容
@@ -56,12 +57,12 @@ Timestamp EPollPoller::poll(int timeoutMs, ChannelList *activeChannels)
             events_.resize(events_.size() * 2);
         }
     } else if (numEvents == 0) {
-        printf("nothing happend \n");
+        LOG_TRACE << "nothing happend";
     } else {
         // error happens, log uncommon ones
         if (savedErrno != EINTR) {
             errno = savedErrno;
-            printf("EPollPoller::poll()\n");
+            LOG_SYSERR << "EPollPoller::poll()";
         }
     }
 
@@ -90,7 +91,7 @@ void EPollPoller::updateChannel(Channel* channel)
 {
     Poller::assertInLoopThread();
     const int index = channel->index();
-    printf("fd = %d events = %d index = %d\n", channel->fd(), channel->events(), index);
+    LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events() << " index = " << index;
 
     if (index == kNew || index == kDeleted) {
         // a new one, add with EPOLL_CTL_ADD
@@ -130,7 +131,7 @@ void EPollPoller::removeChannel(Channel* channel)
 {
     Poller::assertInLoopThread();
     int fd = channel->fd();
-    printf("fd = %d\n", fd);
+    LOG_TRACE << "fd = " << fd;
 
     assert(channels_.find(fd) != channels_.end());
     assert(channels_[fd] == channel);
@@ -157,7 +158,8 @@ void EPollPoller::update(int operation, Channel* channel)
     event.events = channel->events();
     event.data.ptr = channel;
     int fd = channel->fd();
-    printf("epoll_ctl op =  %s fd = %d event = { %s }\n", operationToString(operation), fd, channel->eventsToString().c_str());
+
+    LOG_TRACE << "epoll_ctl op = " << operationToString(operation) << " fd = " << fd << " event = { " << channel->eventsToString() << " }";
 
     /**
      * epollfd_: 参数要操作的文件描述符
@@ -169,9 +171,9 @@ void EPollPoller::update(int operation, Channel* channel)
      */
     if (::epoll_ctl(epollfd_, operation, fd, &event) < 0) {
         if (operation == EPOLL_CTL_DEL) {
-            printf("epoll_ctl op = %s fd = %d\n", operationToString(operation), fd);
+            LOG_SYSERR << "epoll_ctl op = " << operationToString(operation) << " fd = " << fd;
         } else {
-            printf("epoll_ctl op = %s fd = %d\n", operationToString(operation), fd);
+            LOG_SYSFATAL << "epoll_ctl op = " << operationToString(operation) << " fd = " << fd;
         }
     }
 }

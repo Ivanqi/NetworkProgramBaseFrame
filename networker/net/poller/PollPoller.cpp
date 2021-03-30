@@ -1,12 +1,12 @@
 #include "networker/net/poller/PollPoller.h"
 
 #include "networker/base/Types.h"
+#include "networker/base/Logging.h"
 #include "networker/net/Channel.h"
 
 #include <assert.h>
 #include <errno.h>
 #include <poll.h>
-#include <stdio.h>
 
 using namespace networker;
 using namespace networker::net;
@@ -27,14 +27,14 @@ Timestamp PollPoller::poll(int timeoutMs, ChannelList *activeChannels)
     Timestamp now(Timestamp::now());
 
     if (numEvents > 0) {    // poll 事件触发成功
-        printf("%d events happened\n", numEvents);
+        LOG_TRACE << numEvents << " events happened";
         fillActiveChannels(numEvents, activeChannels);
     } else if (numEvents == 0) {
-        printf(" nothing happened");
+        LOG_TRACE << "nothing happened";
     } else {
         if (saveErrno != EINTR) {
             errno = saveErrno;
-            printf("PollPoller::poll()");
+            LOG_TRACE << "PollPoller::poll() error";
         }
     }
     return now;
@@ -66,7 +66,7 @@ void PollPoller::fillActiveChannels(int numEvents, ChannelList *activeChannels) 
 void PollPoller::updateChannel(Channel *channel)
 {
     Poller::assertInLoopThread();
-    printf("fd = %d events = %d\n", channel->fd(), channel->events());
+    LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
 
     if (channel->index() < 0) {
         // 一个新的，添加到pollfds_
@@ -112,7 +112,7 @@ void PollPoller::updateChannel(Channel *channel)
 void PollPoller::removeChannel(Channel *channel)
 {
     Poller::assertInLoopThread();
-    printf("fd = %d\n", channel->fd());
+    LOG_TRACE << "fd = " << channel->fd();
 
     assert(channels_.find(channel->fd()) != channels_.end());
     assert(channels_[channel->fd()] == channel);

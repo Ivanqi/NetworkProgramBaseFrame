@@ -2,7 +2,7 @@
 #include "networker/net/Endian.h"
 #include "networker/base/Logging.h"
 #include "networker/base/Types.h"
-
+#include "networker/base/Logging.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -113,7 +113,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
 
     if (connfd < 0) {
         int savedErrno = errno;
-        printf("accept4 error\n");
+        LOG_SYSERR << "Socket::accept";
         switch (savedErrno) {
             case EAGAIN:
             case ECONNABORTED:
@@ -131,10 +131,10 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
             case ENOMEM:
             case ENOTSOCK:
             case EOPNOTSUPP:
-                printf("unexpected error of ::accept :%d", savedErrno);
+                LOG_FATAL << "unexpected error of ::accept " << savedErrno;
                 break;
             default:
-                printf("unknown error of ::accept %d", savedErrno);
+                LOG_FATAL << "unknown error of ::accept " << savedErrno;
                 break;
         }
     }

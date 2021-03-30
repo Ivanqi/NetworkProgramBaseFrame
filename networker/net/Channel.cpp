@@ -1,10 +1,10 @@
 #include "networker/net/Channel.h"
 #include "networker/net/EventLoop.h"
+#include "networker/base/Logging.h"
 
 #include <sstream>
 #include <poll.h>
 #include <assert.h>
-#include <stdio.h>
 
 using namespace networker;
 using namespace networker::net;
@@ -68,14 +68,14 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
     // POLLIN：有数据可读； POLLHUP: 对方描述符挂起
     if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
         if (logHup_) {
-            printf("fd = %d Channel::handle_event() POLLHUP\n", fd_);
+            LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLHUP";
         }
         if (closeCallback_) closeCallback_();
     }
 
     // POLLNVAL: 指定的文件描述符非法
     if (revents_ & POLLNVAL) {
-        printf("fd = %d Channel::handle_event() POLLNVAL\n", fd_);
+        LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLNVAL";
     }
 
     // POLLERR: 指定的文件描述符发生错误； POLLNVAL: 指定的文件描述符非法

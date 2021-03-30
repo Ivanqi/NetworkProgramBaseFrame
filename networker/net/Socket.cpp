@@ -1,6 +1,7 @@
 #include "networker/net/Socket.h"
 #include "networker/net/InetAddress.h"
 #include "networker/net/SocketsOps.h"
+#include "networker/base/Logging.h"
 
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -103,11 +104,11 @@ void Socket::setReusePort(bool on)
     int ret = ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEPORT, &optval, static_cast<socklen_t>(sizeof(optval)));
 
     if (ret < 0 && on) {
-        printf("SO_REUSEPORT failed.\n");
+        LOG_SYSERR << "SO_REUSEPORT failed.";
     }
 #else
     if (on) {
-        printf("SO_REUSEPORT is not supported.\n");
+        LOG_SYSERR << "SO_REUSEPORT is not supported.";
     }
 #endif
 }

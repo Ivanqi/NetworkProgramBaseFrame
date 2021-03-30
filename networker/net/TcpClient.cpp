@@ -2,6 +2,7 @@
 #include "networker/net/Connector.h"
 #include "networker/net/EventLoop.h"
 #include "networker/net/SocketsOps.h"
+#include "networker/base/Logging.h"
 
 #include <stdio.h>  // snprintf
 #include <functional>
@@ -68,7 +69,7 @@ TcpClient::~TcpClient()
 
 void TcpClient::connect()
 {
-    printf("TcpClient::connect[ %s ] - connecting to %s\n", name_.c_str(), connector_->serverAddress().toIpPort().c_str());
+    LOG_INFO << "TcpClient::connect[" << name_ << "] - connecting to " << connector_->serverAddress().toIpPort();
     connect_ = true;
     connector_->start();
 }
@@ -135,8 +136,7 @@ void TcpClient::removeConnection(const TcpConnectionPtr& conn)
 
     loop_->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
     if (retry_ && connect_) {
-        printf("TcpClient::connect[ %s ] - connecting to %s\n", name_.c_str(), connector_->serverAddress().toIpPort().c_str());
-
+        LOG_INFO << "TcpClient::connect[" << name_ << "] - Reconnecting to " << connector_->serverAddress().toIpPort();
         connector_->restart();
     }
 }

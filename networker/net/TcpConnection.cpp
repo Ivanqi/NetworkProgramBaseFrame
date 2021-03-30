@@ -6,13 +6,13 @@
 #include "networker/net/Socket.h"
 #include "networker/net/SocketsOps.h"
 
-#include <stdio.h>
 #include <errno.h>
 
 void networker::net::defaultConnectionCallback(const TcpConnectionPtr& conn)
 {
-    string connectState = conn->connected() ? "UP" : "DOWN";
-    printf("%s -> %s is %s\n", conn->localAddress().toIpPort().c_str(), conn->peerAddress().toIpPort().c_str(), connectState.c_str());
+    LOG_TRACE << conn->localAddress().toIpPort() << " -> "
+              << conn->peerAddress().toIpPort() << " is "
+              << (conn->connected() ? "UP" : "DOWN");
 }
 
 void networker::net::defaultMessageCallback(const TcpConnectionPtr& conn, Buffer *buf, Timestamp)
@@ -41,7 +41,10 @@ TcpConnection::TcpConnection(EventLoop *loop, const string& nameArg, int sockfd,
 
 TcpConnection::~TcpConnection()
 {
-    printf("TcpConnection::~TcpConnection::dtor[ %s ] fd= %d state= %s\n", name_.c_str(), channel_->fd(), stateToString());
+    LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this
+              << " fd=" << channel_->fd()
+              << " state=" << stateToString();
+
     assert(state_ == kDisconnected);
 }
 
@@ -292,10 +295,10 @@ void TcpConnection::handleWrite()
                 }
             }
         } else {
-            printf("TcpConnection::handleWrite\n");
+            LOG_SYSERR << "TcpConnection::handleWrite";
         }
     } else{
-        printf("Connection fd =  %d is down, no more writing\n", channel_->fd());
+        LOG_TRACE << "Connection fd = " << channel_->fd() << " is down, no more writing";
     }
 }
 

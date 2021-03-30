@@ -1,6 +1,7 @@
 #include "networker/net/InetAddress.h"
 #include "networker/net/Endian.h"
 #include "networker/net/SocketsOps.h"
+#include "networker/base/Logging.h"
 
 #include <netdb.h>
 #include <netinet/in.h>
@@ -106,7 +107,7 @@ bool InetAddress::resolve(StringArg hostname, InetAddress* out)
         return true;
     } else {
         if (ret) {
-            printf("InetAddress::resolve error\n");
+            LOG_SYSERR << "InetAddress::resolve error";
         }
         return false;
     }

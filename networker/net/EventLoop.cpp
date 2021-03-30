@@ -1,47 +1,48 @@
 #include "networker/net/EventLoop.h"
-#include "networker/base/MutexLock.h"
 #include "networker/net/Channel.h"
 #include "networker/net/Poller.h"
 #include "networker/net/SocketsOps.h"
 #include "networker/net/TimerQueue.h"
+#include "networker/base/MutexLock.h"
+#include "networker/base/Logging.h"
+
 
 #include <algorithm>
 #include <signal.h>
 #include <sys/eventfd.h>
 #include <unistd.h>
-#include <stdio.h>
 
 using namespace networker;
 using namespace networker::net;
 
 namespace 
 {
-__thread EventLoop *t_loopInThisThread = 0;
+    __thread EventLoop *t_loopInThisThread = 0;
 
-const int kPollTimeMs = 10000;
+    const int kPollTimeMs = 10000;
 
-int createEventfd()
-{
-    int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-    if (evtfd < 0) {
-        printf("Failed in eventfd\n");
-        abort();
-    }
-    return evtfd;
-}
-
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-class IgnoreSigPipe
-{
-    public:
-        IgnoreSigPipe()
-        {
-            ::signal(SIGPIPE, SIG_IGN);
+    int createEventfd()
+    {
+        int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+        if (evtfd < 0) {
+            LOG_SYSERR << "Failed in eventfd";
+            abort();
         }
-};
-#pragma GCC diagnostic error "-Wold-style-cast"
+        return evtfd;
+    }
 
-IgnoreSigPipe initObj;
+    #pragma GCC diagnostic ignored "-Wold-style-cast"
+    class IgnoreSigPipe
+    {
+        public:
+            IgnoreSigPipe()
+            {
+                ::signal(SIGPIPE, SIG_IGN);
+            }
+    };
+    #pragma GCC diagnostic error "-Wold-style-cast"
+
+    IgnoreSigPipe initObj;
 };
 /**
  * 每个线程至多有一个EventLoop对象，那么使用getEventLoopOfCurrentThread返回这个对象
@@ -62,9 +63,9 @@ EventLoop::EventLoop()
     timerQueue_(new TimerQueue(this)), wakeupFd_(createEventfd()),
     wakeupChannel_(new Channel(this, wakeupFd_)), currentActiveChannel_(NULL)
 {
-    printf("wakeupFd_:%d\n", wakeupFd_);
+    LOG_DEBUG << "EventLoop created " << this << " in thread " << threadId_;
     if (t_loopInThisThread) {
-        printf("t_loopInThisThread is not null, exists in this thread: %d\n", threadId_);
+        LOG_FATAL << "Another EventLoop " << t_loopInThisThread << " exists in this thread " << threadId_;
     } else {
         t_loopInThisThread = this;
     }
@@ -203,7 +204,9 @@ bool EventLoop::hasChannel(Channel *channel)
 
 void EventLoop::abortNotInLoopThread()
 {
-    printf("EventLoop::abortNotInLoopThread - was created in threadId_ =  %d, current thread id = %d\n", threadId_, CurrentThread::tid());
+    LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
+              << "was created in threadId_ = " << threadId_
+              << ", current thread id = " << CurrentThread::tid();
 }
 
 /**
@@ -216,7 +219,7 @@ void EventLoop::wakeup()
     uint64_t one = 1;
     ssize_t n = sockets::write(wakeupFd_, &one, sizeof(one));
     if (n != sizeof(one)) {
-        printf("EventLoop::wakeup() writes %zd bytes instead of 8\n", n);
+        LOG_ERROR << "EventLoop::wakeup() writes " << n << " bytes instead of 8"; 
     }
 }
 
@@ -226,7 +229,7 @@ void EventLoop::handleRead()
     uint64_t one = 1;
     ssize_t n = sockets::read(wakeupFd_, &one, sizeof(one));
     if (n != sizeof(one)) {
-        printf("EventLoop::handleRead() reads %zd bytes instead of 8\n", n);
+        LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8"; 
     }
 }
 
@@ -250,6 +253,6 @@ void EventLoop::doPendingFunctors()
 void EventLoop::printActiveChannels() const
 {
     for (const Channel *channel: activeChannels_) {
-        printf("{ %s }\n", channel->reventsToString().c_str());
+        LOG_TRACE << "{ " << channel->reventsToString() << " }";
     }
 }

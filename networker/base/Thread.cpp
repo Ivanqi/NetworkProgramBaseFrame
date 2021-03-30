@@ -6,7 +6,6 @@
 #include <linux/unistd.h>
 #include <stdint.h>
 #include <assert.h>
-#include <iostream>
 
 #include "networker/base/Thread.h"
 #include "networker/base/CurrentThread.h"

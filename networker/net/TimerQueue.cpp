@@ -2,10 +2,10 @@
 #include "networker/net/EventLoop.h"
 #include "networker/net/Timer.h"
 #include "networker/net/TimerId.h"
+#include "networker/base/Logging.h"
 
 #include <sys/timerfd.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <errno.h>
 
 
@@ -22,7 +22,7 @@ namespace net
          */
         int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
         if (timerfd < 0) {
-            printf("Failed in timerfd_create\n");
+            LOG_SYSFATAL << "Failed in timerfd_create";
         }
         return timerfd;
     }
@@ -48,9 +48,9 @@ namespace net
         uint64_t howmany;
         // timerfd读出来的值一般是1，表示超时次数
         ssize_t n = ::read(timerfd, &howmany, sizeof(howmany));
-
+        LOG_TRACE << "TimerQueue::handleRead() " << howmany << " at " << now.toString();
         if (n != sizeof(howmany)) {
-            printf("TimerQueue::handleRead() reads %zd bytes instead of 8\n", n);
+            LOG_ERROR << "TimerQueue::handleRead() reads " << n << " bytes instead of 8";
         }
     }
 
@@ -79,7 +79,7 @@ namespace net
          */
         int ret = ::timerfd_settime(timerfd, 0, &newValue, &oldValue);
         if (ret) {
-            printf("timerfd_settime() Error:[%d:%s]\n", errno, strerror(errno));
+            LOG_SYSERR << "timerfd_settime() ";
         }
     }
 };

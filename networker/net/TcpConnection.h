@@ -205,8 +205,6 @@ namespace net
 
     typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 
-    // void defaultConnectionCallback(const TcpConnectionPtr& conn);
-    // void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer *buf, Timestamp);
 };
 };
 #endif

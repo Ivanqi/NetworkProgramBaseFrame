@@ -2,6 +2,7 @@
 #include "networker/net/Channel.h"
 #include "networker/net/EventLoop.h"
 #include "networker/net/SocketsOps.h"
+#include "networker/base/Logging.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -14,11 +15,12 @@ const int Connector::kMaxRetryDelayMs;
 Connector::Connector(EventLoop *loop, const InetAddress& serverAddr)
     : loop_(loop), serverAddr_(serverAddr), connect_(false), state_(kDisconnected), retryDelayMs_(kInitRetryDelayMs)
 {
-
+    LOG_DEBUG << "ctor[" << this << "]";
 }
 
 Connector::~Connector()
 {
+    LOG_DEBUG << "dtor[" << this << "]";
     assert(!channel_);
 }
 
@@ -35,7 +37,7 @@ void Connector::startInLoop()
     if (connect_) {
         connect();
     } else {
-        printf("do not connect\n");
+        LOG_DEBUG << "do not connect";
     }
 }
 
@@ -96,12 +98,12 @@ void Connector::connect()
         case EBADF:
         case EFAULT:
         case ENOTSOCK:
-            printf("connect error in Connector::startInLoop %d\n", savedErrno);
+            LOG_SYSERR << "connect error in Connector::startInLoop " << savedErrno;
             sockets::close(sockfd);
             break;
         
         default:
-            printf("Unexpected error in Connector::startInLoop %d\n", savedErrno);
+            LOG_SYSERR << "Unexpected error in Connector::startInLoop " << savedErrno;
             sockets::close(sockfd);
             break;
     }
@@ -148,23 +150,22 @@ void Connector::resetChannel()
 
 void Connector::handleWrite()
 {
-    printf("Connector::handleWrite %d\n", state_);
+    LOG_TRACE << "Connector::handleWrite " << state_;
 
     if (state_ == kConnecting) {
         int sockfd = removeAndResetChannel();
         int err = sockets::getSocketError(sockfd);
 
         if (err) {
-            printf("Connector::handleWrite - SO_ERROR = %d\n", err);
+            LOG_TRACE << "Connector::handleWrite - SO_ERROR = " << err << " " << strerror_tl(err);
             retry(sockfd);
 
         } else if (sockets::isSelfConnect(sockfd)) {
-            printf("Connector::handleWrite - Self connect\n");
+            LOG_TRACE << "Connector::handleWrite - Self connect";
             retry(sockfd);
 
         } else {
-            setState(kConnected);
-            printf("Connector::handleWrite %d complete\n", state_);
+            setState(kConnected);            
             if (connect_) {
                 newConnectionCallback_(sockfd);
             } else {
@@ -179,11 +180,12 @@ void Connector::handleWrite()
 
 void Connector::handleError()
 {
-    printf("Connector::handleError state=%d\n", state_);
+    LOG_ERROR << "Connector::handleError state= " << state_;
+
     if (state_ == kConnecting) {
         int sockfd = removeAndResetChannel();
         int err = sockets::getSocketError(sockfd);
-        printf("SO_ERROR = %d\n", err);
+        LOG_TRACE << "SO_ERROR = " << err << " " << strerror_tl(err);
         retry(sockfd);
     }
 }
@@ -194,7 +196,7 @@ void Connector::retry(int sockfd)
     setState(kDisconnected);
 
     if (connect_) {
-        printf("Connector::retry -- Retry connecting to %s in %d milliseconds.\n", serverAddr_.toIpPort().c_str(), retryDelayMs_);
+        LOG_INFO << "Connector::retry - Retry connecting to " << serverAddr_.toIpPort() << " in " << retryDelayMs_ << " milliseconds. ";
         /**
          * 重试间隔应该应该逐渐延长，例如0.5s, 1s, 2s, 4s,直至30s,即back-off
          */
@@ -202,6 +204,6 @@ void Connector::retry(int sockfd)
 
         retryDelayMs_ = std::min(retryDelayMs_ * 2, kMaxRetryDelayMs);
     } else {
-        printf("do not connect\n");
+        LOG_DEBUG << "do not connect";
     }
 }

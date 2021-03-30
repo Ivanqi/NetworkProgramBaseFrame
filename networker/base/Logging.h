@@ -14,12 +14,12 @@ namespace networker
     {       
         public:
             enum LogLevel {
-                TRACE,
-                DEBUG,
-                INFO,
-                WARN,
-                ERROR,
-                FATAL,
+                TRACE,  // 调试信息
+                DEBUG,  // debug信息
+                INFO,   // 常规信息
+                WARN,   // 警告信息
+                ERROR,  // 错误信息
+                FATAL,  // 致命错误信息
                 NUM_LOG_LEVELS,
             };
 
