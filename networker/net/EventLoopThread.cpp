@@ -42,6 +42,12 @@ EventLoop* EventLoopThread::startLoop()
     return loop;
 }
 
+/**
+ * 线程主函数在stack上定义EventLoop对象，然后将其地址赋值给loop_成员变量
+ * 最后notify()条件变量，唤醒startLoop()
+ * 
+ * 由于EventLoop的生命期与线程主函数的作用域相同，因此在threadFunc()退出之后这个指针就失效了
+ */
 void EventLoopThread::threadFunc()
 {
     EventLoop loop;

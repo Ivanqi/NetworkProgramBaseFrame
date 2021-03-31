@@ -91,6 +91,7 @@ uint16_t InetAddress::toPort() const
 
 static __thread char t_resolveBuffer[64 * 1024];
 
+// 得到dns信息
 bool InetAddress::resolve(StringArg hostname, InetAddress* out)
 {
     assert(out != NULL);

@@ -110,6 +110,8 @@ namespace networker
     Thread::~Thread()
     {
         if (started_ && !joined_) {
+            // pthread_join()函数的替代函数
+            // pthread_detach 即主线程与子线程分离，子线程结束后，资源自动回收
             pthread_detach(pthreadId_);
         }
     }

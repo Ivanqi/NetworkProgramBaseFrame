@@ -17,14 +17,14 @@ namespace net
     class TcpClient
     {
         private:
-            EventLoop *loop_;
+            EventLoop *loop_;   // loop
             ConnectorPtr connector_;    // 避免露出Connector
-            const string name_;         
-            ConnectionCallback connectionCallback_;
-            MessageCallback messageCallback_;
-            WriteCompleteCallback writeCompleteCallback_;
+            const string name_; // tcpclient 名称         
+            ConnectionCallback connectionCallback_; // connection回调
+            MessageCallback messageCallback_;   // read回调
+            WriteCompleteCallback writeCompleteCallback_;   // 写完成回调
 
-            bool retry_;    // atomic
+            bool retry_;    // atomic, 重连
             bool connect_;  // atomic
 
             // always in loop thread
@@ -68,6 +68,12 @@ namespace net
             const string& name() const
             {
                 return name_;
+            }
+
+            // 设置connection 回调。不是线程安全
+            void setConnectionCallback(ConnectionCallback cb)
+            {
+                connectionCallback_ = std::move(cb);
             }
 
             // 设置message回调。不是线程安全

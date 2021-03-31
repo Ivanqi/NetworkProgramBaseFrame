@@ -29,6 +29,7 @@ namespace net
 
     struct timespec howMuchTimeFromNow(Timestamp when) 
     {
+        // 有效时间 = when的时间(微秒) - 当前时间(微秒)
         int64_t microseconds = when.microSecondsSinceEpoch() - Timestamp::now().microSecondsSinceEpoch();
 
         if (microseconds < 100) {
@@ -53,7 +54,8 @@ namespace net
             LOG_ERROR << "TimerQueue::handleRead() reads " << n << " bytes instead of 8";
         }
     }
-
+    
+    // struct itimerspec 说明，https://blog.csdn.net/whahu1989/article/details/103722557
     void resetTimerfd(int timerfd, Timestamp expiration)
     {
         struct itimerspec newValue;
@@ -126,6 +128,7 @@ void TimerQueue::cancel(TimerId timerId)
     loop_->runInLoop(std::bind(&TimerQueue::cancelInLoop, this, timerId));
 }
 
+// 新增定时事件
 void TimerQueue::addTimerInLoop(Timer* timer)
 {
     loop_->assertInLoopThread();
@@ -248,17 +251,20 @@ bool TimerQueue::insert(Timer *timer)
     Timestamp when = timer->expiration();
     TimerList::iterator it = timers_.begin();
     
+    // 如果timers_为空或者 when的时间大于timers_集合中的第一个元素的时间，意味着when的时间到期得最早，所以earliestChanged为true
     if (it == timers_.end() || when.microSecondsSinceEpoch() > it->first.microSecondsSinceEpoch()) {
         earliestChanged = true;
     }
 
     {
+        // 把when新增到timers_集合中
         std::pair<TimerList::iterator, bool> result = timers_.insert(Entry(when, timer));
         assert(result.second);
         (void)result;
     }
 
     {
+        // 把timer新增到activeTimers_集合中
         std::pair<ActiveTimerSet::iterator, bool> result = activeTimers_.insert(ActiveTimer(timer, timer->sequence()));
         assert(result.second);
         (void)result;

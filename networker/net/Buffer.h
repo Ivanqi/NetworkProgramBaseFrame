@@ -229,7 +229,29 @@ namespace net
                 append(&x, sizeof(x));
             }
 
-            // 读取int64位的主机序列
+            // 读取int32位的主机序列
+            int32_t readInt32()
+            {
+                int32_t result = peekInt32();
+                retrieveInt32();
+                return result;
+            }
+
+            int16_t readInt16()
+            {
+                int16_t result = peekInt16();
+                retrieveInt16();
+                return result;
+            }
+
+            int8_t readInt8()
+            {
+                int8_t result = peekInt8();
+                retrieveInt8();
+                return result;
+            }
+
+            // 看int64位的主机序列
             int64_t peekInt64() const
             {
                 assert(readableBytes() >= sizeof(int64_t));
@@ -238,7 +260,7 @@ namespace net
                 return networkToHost64(be64);
             }
 
-            // 读取int32位的主机序列
+            // 看int32位的主机序列
             int32_t peekInt32() const
             {
                 assert(readableBytes() >= sizeof(int32_t));
@@ -287,6 +309,10 @@ namespace net
                 prepend(&x, sizeof(x));
             }
 
+            /**
+             * 前方添加
+             * preenddata空间，让程序能以很低的代价在数据前面添加几个字节
+             */
             void prepend(const void* /*restrict*/ data, size_t len)
             {
                 assert(len <= prependableBytes());
@@ -301,6 +327,12 @@ namespace net
                 other.ensureWritableBytes(readableBytes() + reserve);
                 other.append(toStringPiece());
                 swap(other);
+            }
+
+            // 返回当前向量分配的存储空间大小
+            size_t internalCapacity() const
+            {
+                return buffer_.capacity();
             }
 
             ssize_t readFd(int fd, int *savedErrno);
@@ -319,12 +351,13 @@ namespace net
             void makeSpace(size_t len)
             {
                 if (writableBytes() + prependableBytes() < len + kCheapPrepend) {
-                    // 移动可读数据
+                    // 重新设置存储内存
                     buffer_.resize(writerIndex_ + len);
                 } else {
                     // 将可读数据移到前面，在缓冲区内留出空间
                     assert(kCheapPrepend < readerIndex_);
                     size_t readable = readableBytes();
+                    // 把readerIndex_到writerIndex_的内存，移动到beign()处
                     std::copy(begin() + readerIndex_, begin() + writerIndex_, begin() + kCheapPrepend);
 
                     readerIndex_ = kCheapPrepend;

@@ -227,6 +227,7 @@ void TcpConnection::startReadInLoop()
     }
 }
 
+// 收到连接
 void TcpConnection::connectEstablished()
 {
     loop_->assertInLoopThread();
@@ -238,6 +239,7 @@ void TcpConnection::connectEstablished()
     connectionCallback_(shared_from_this());
 }
 
+// 连接销毁
 void TcpConnection::connectDestroyed()
 {
     loop_->assertInLoopThread();
@@ -284,12 +286,15 @@ void TcpConnection::handleWrite()
 
         if (n > 0) {
             outputBuffer_.retrieve(0);
+            // 数据已经写完
             if (outputBuffer_.readableBytes() == 0) {
+                // 把channel_状态设置成不可读
                 channel_->disableWriting();
                 if (writeCompleteCallback_) {
                     loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
                 }
 
+                // 如果state_ 等于 kDisconnecting, 需要关闭连接
                 if (state_ == kDisconnecting) {
                     shutdownInLoop();
                 }

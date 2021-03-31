@@ -130,6 +130,18 @@ void EventLoop::runInLoop(Functor cb)
     }
 }
 
+/**
+ * 流程
+ *  1. 加锁，然后将该函数放到该EventLoop的pendingFunctors_队列中
+ *  2. 判断是否要唤醒EventLoop，如果是则调用wakeup()唤醒该EventLoop
+ * 
+ * 为什么要唤醒EventLoop?
+ *  1. 调用了pendingFunctors_.push_back(cb);, 将该函数放在pendingFunctors_中.
+ *      EventLoop的每一轮循环最后会调用doPendingFunctors依次执行这些函数
+ *  
+ *  2. 而EventLoop的唤醒是通过epoll_wait实现的，如果此时该EventLoop中迟迟没有事件触发，那么epoll_wait一直就会阻塞
+ *      这样会导致，pengdingFunctors迟迟不能被执行了。所以唤醒EventLoop是必须的
+ */
 void EventLoop::queueInLoop(Functor cb)
 {
     // 减少锁范围
@@ -222,7 +234,10 @@ void EventLoop::wakeup()
     }
 }
 
-// 从wakeupFd_读出内容
+/**
+ * Eventloop通过wakeup()唤醒，从而往wakeupFd_写内容
+ * 这个时候触发handleRead()，从而读出内容
+ */
 void EventLoop::handleRead()
 {
     uint64_t one = 1;

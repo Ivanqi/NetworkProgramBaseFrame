@@ -31,25 +31,26 @@ namespace net
     {
         private:
             enum StateE {kDisconnected, kConnecting, kConnected, kDisconnecting};
-            EventLoop *loop_;
-            const string name_;
-            StateE state_;  // 使用原子变量
-            bool reading_;
+            EventLoop *loop_;   // ioLoop
+            const string name_; // 连接名称
+            StateE state_;  // 使用原子变量，状态机
+            bool reading_;  // 事件是否可读
 
-            std::unique_ptr<Socket> socket_;
-            std::unique_ptr<Channel> channel_;
+            std::unique_ptr<Socket> socket_;    // 新进连接的fd
+            std::unique_ptr<Channel> channel_;  // ioLoop 的channel
 
             const InetAddress localAddr_;   // 本地地址
             const InetAddress peerAddr_;    // 对端地址
 
             // 回调函数
-            ConnectionCallback connectionCallback_;
-            MessageCallback messageCallback_;
-            WriteCompleteCallback writeCompleteCallback_;
-            HighWaterMarkCallback highWaterMarkCallback_;
-            CloseCallback closeCallback_;
+            ConnectionCallback connectionCallback_; // 连接回调
+            MessageCallback messageCallback_;   // 信息回调
+            WriteCompleteCallback writeCompleteCallback_; // 写入完成回调
+            HighWaterMarkCallback highWaterMarkCallback_;   // 高水位回调
+            CloseCallback closeCallback_;   // 关闭回调
             size_t highWaterMark_;
             
+            // 使用buffer作为缓冲
             Buffer inputBuffer_;
             Buffer outputBuffer_;
             std::any context_;

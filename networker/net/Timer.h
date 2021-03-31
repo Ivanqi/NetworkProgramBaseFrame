@@ -41,7 +41,7 @@ namespace net
 
             bool repeat() const
             {
-                return sequence_;
+                return repeat_;
             }
 
             int64_t sequence() const

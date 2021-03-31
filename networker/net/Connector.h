@@ -22,15 +22,15 @@ namespace net
         
         private:
             enum States {kDisconnected, kConnecting, kConnected};   // 未连接，连接中，已连接
-            static const int kMaxRetryDelayMs = 30 * 1000;
-            static const int kInitRetryDelayMs = 500;
+            static const int kMaxRetryDelayMs = 30 * 1000;  // 最大延迟时间
+            static const int kInitRetryDelayMs = 500;   // 初始延迟重试时间
 
-            EventLoop *loop_;
-            InetAddress serverAddr_;
-            bool connect_;  // atomic
-            States state_;
-            std::unique_ptr<Channel> channel_;
-            NewConnectionCallback newConnectionCallback_;
+            EventLoop *loop_;   // loop
+            InetAddress serverAddr_;    // ip + port
+            bool connect_;  // atomic, 连接标识
+            States state_;  // 状态
+            std::unique_ptr<Channel> channel_;  // channel
+            NewConnectionCallback newConnectionCallback_;   // 新的连接回调
             int retryDelayMs_;
         
         public:

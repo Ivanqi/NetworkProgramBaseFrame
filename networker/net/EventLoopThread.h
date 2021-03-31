@@ -12,6 +12,10 @@ namespace net
 {
     class EventLoop;
 
+    /**
+     * IO线程不一定是主线程，可以在任何一个线程创建并运行EventLoop
+     * 一个程序也可以有不止一个IO线程，可以按优先级将不同的socket分给不同的IO线程，避免优先级反转
+     */
     class EventLoopThread: noncopyable
     {
         public:

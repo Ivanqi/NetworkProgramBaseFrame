@@ -64,6 +64,7 @@ void Connector::stopInLoop()
  */
 void Connector::connect()
 {
+    // 创建一个sock，然后去连接对端
     int sockfd = sockets::createNonblockingOrDie(serverAddr_.family());
     int ret = sockets::connect(sockfd, serverAddr_.getSockAddr());
     int savedErrno = (ret == 0) ? 0 : errno;
@@ -120,18 +121,19 @@ void Connector::restart()
 
 void Connector::connecting(int sockfd)
 {
-    setState(kConnecting);
+    setState(kConnecting);  // 设置状态
     assert(!channel_);
 
-    channel_.reset(new Channel(loop_, sockfd));
+    channel_.reset(new Channel(loop_, sockfd)); // 重新设置channel
 
     channel_->setWriteCallback(std::bind(&Connector::handleWrite, this)); // FIXME: unsafe
 
     channel_->setErrorCallback(std::bind(&Connector::handleError, this)); // FIXME: unsafe
 
-    channel_->enableWriting();
+    channel_->enableWriting(); // 新增/修改 epoll/poll事件
 }
 
+// 删除和重置channle
 int Connector::removeAndResetChannel()
 {
     channel_->disableAll();
