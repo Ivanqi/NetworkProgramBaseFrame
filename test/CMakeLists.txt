@@ -62,6 +62,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 add_executable(echo ./src/echo.cpp)
 
 # target_link_libraries 这个指令可以用来添加需要链接的共享库
-target_link_libraries(echo ${networker_base})
 target_link_libraries(echo ${networker_net})
+target_link_libraries(echo ${networker_base})
 target_link_libraries(echo pthread rt)
