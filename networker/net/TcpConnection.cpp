@@ -105,6 +105,7 @@ void TcpConnection::sendInLoop(const void* data, size_t len)
     bool faultError = false;
 
     if (state_ == kDisconnected) {
+        LOG_WARN << "disconnected, give up writing";
         return ;
     }
 
@@ -149,7 +150,7 @@ void TcpConnection::shutdown()
 {
     // 使用比较和交换
     if (state_ == kConnected) {
-        setState(kDisconnected);
+        setState(kDisconnecting);
         loop_->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
     }
 }
@@ -285,7 +286,7 @@ void TcpConnection::handleWrite()
         ssize_t n = sockets::write(channel_->fd(), outputBuffer_.peek(), outputBuffer_.readableBytes());
 
         if (n > 0) {
-            outputBuffer_.retrieve(0);
+            outputBuffer_.retrieve(n);
             // 数据已经写完
             if (outputBuffer_.readableBytes() == 0) {
                 // 把channel_状态设置成不可读
@@ -310,6 +311,7 @@ void TcpConnection::handleWrite()
 void TcpConnection::handleClose()
 {
     loop_->assertInLoopThread();
+    LOG_TRACE << "TcpConnection::handleClose fd = " << channel_->fd() << " state = " << stateToString();
     assert(state_ == kConnected || state_ == kDisconnecting);
 
     // 我们不关闭fd，把它交给dtor，这样我们可以很容易地找到泄漏

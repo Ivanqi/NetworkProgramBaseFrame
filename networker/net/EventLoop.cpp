@@ -76,6 +76,7 @@ EventLoop::EventLoop()
 
 EventLoop::~EventLoop()
 {
+    LOG_DEBUG << "EventLoop " << this << " of thread " << threadId_ << " destructs in thread " << CurrentThread::tid();
     wakeupChannel_->disableAll();
     wakeupChannel_->remove();
     ::close(wakeupFd_);
@@ -88,12 +89,18 @@ void EventLoop::loop()
     assertInLoopThread();
     looping_ = true;
     quit_ = false;
+    LOG_TRACE << "EventLoop " << this << " start looping";
 
     while (!quit_) {
         activeChannels_.clear();
         // 监听文件描述符注册的事件
         pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
         ++iteration_;
+
+        if (Logger::logLevel() <= Logger::TRACE) {
+            printActiveChannels();
+        }
+
         eventHandling_ = true;
         for (Channel *channel: activeChannels_) {
             currentActiveChannel_ = channel;
@@ -106,6 +113,7 @@ void EventLoop::loop()
         doPendingFunctors();
     }
 
+    LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
 }
 

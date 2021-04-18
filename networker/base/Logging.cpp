@@ -87,15 +87,15 @@ Logger::RecordBlock::RecordBlock(LogLevel level, int savedErrno, const SourceFil
     : time_(Timestamp::now()), stream_(), 
     level_(level), line_(line), basename_(file)
 {
-  formatTime();
+    formatTime();
 
-  CurrentThread::tid();
-  stream_ << T(CurrentThread::tidString(), CurrentThread::tidStringLength()) << ' ';
-  stream_ << T(LogLevelName[level], 6);
+    CurrentThread::tid();
+    stream_ << T(CurrentThread::tidString(), CurrentThread::tidStringLength()) << ' ';
+    stream_ << T(LogLevelName[level], 6);
   
-  if (savedErrno != 0) {
-    stream_ << strerror_tl(savedErrno) << " (errno=" << savedErrno << ") ";
-  }
+    if (savedErrno != 0) {
+        stream_ << strerror_tl(savedErrno) << " (errno=" << savedErrno << ") ";
+    }
 }
 
 // 记录当前时间

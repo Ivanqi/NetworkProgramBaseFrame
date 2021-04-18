@@ -65,11 +65,13 @@ void Channel::handleEvent(Timestamp receiveTime)
 void Channel::handleEventWithGuard(Timestamp receiveTime)
 {
     eventHandling_= true;
+    LOG_TRACE << reventsToString();
     // POLLIN：有数据可读； POLLHUP: 对方描述符挂起
     if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
         if (logHup_) {
             LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLHUP";
         }
+        LOG_TRACE << "fd = " << fd_ << " close socket";
         if (closeCallback_) closeCallback_();
     }
 

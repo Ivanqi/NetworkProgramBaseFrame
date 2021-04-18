@@ -73,6 +73,7 @@
 
     void Socket::shutdownWrite()
     {
+        printf("Socket::shutdownWrite:%d \n", sockfd_);
         sockets::shutdownWrite(sockfd_);
     }
 

@@ -191,6 +191,7 @@ void sockets::shutdownWrite(int sockfd)
      *  成功则返回0
      *  失败返回-1
      */
+    printf("sockets::shutdownWrite:%d \n", sockfd);
     assert(::shutdown(sockfd, SHUT_WR) == 0);
 }
 

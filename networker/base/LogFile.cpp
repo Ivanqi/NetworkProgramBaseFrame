@@ -18,7 +18,7 @@ LogFile::LogFile(const string& basename, off_t rollSize, bool threadSafe, int fl
     lastRoll_(0),
     lastFlush_(0)
 {
-  assert(basename.find('/') == string::npos);
+//   assert(basename.find('/') == string::npos);
   rollFile();
 }
 
@@ -51,7 +51,7 @@ void LogFile::append_unlocked(const char* logline, int len)
     file_->append(logline, len);
     // 写入的字节是否大于 要轮转的字节
     if (file_->writtenBytes() > rollSize_) {
-        rollFile();
+        rollFile(true);
     } else {
         ++count_;
         // count_ 大于 checkEveryN_。需要检查，是否需要轮转日志或者情况文件缓存
@@ -61,7 +61,7 @@ void LogFile::append_unlocked(const char* logline, int len)
             time_t thisPeriod_ = now / kRollPerSeconds_ * kRollPerSeconds_;
             // thisPeriod_ != startOfPeriod_ 意味这轮转日志的时间已经不一样了
             if (thisPeriod_ != startOfPeriod_) {
-                rollFile();
+                rollFile(true);
             } else if (now - lastFlush_ > flushInterval_) { // 清空文件缓存
                 lastFlush_ = now;
                 file_->flush();
@@ -70,10 +70,10 @@ void LogFile::append_unlocked(const char* logline, int len)
     }
 }
 
-bool LogFile::rollFile()
+bool LogFile::rollFile(bool isRoll)
 {
     time_t now = 0;
-    string filename = getLogFileName(basename_, &now);
+    string filename = getLogFileName(basename_, &now, isRoll);
     time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
 
     if (now > lastRoll_) {
@@ -87,7 +87,7 @@ bool LogFile::rollFile()
     }
 }
 
-string LogFile::getLogFileName(const string& basename, time_t* now)
+string LogFile::getLogFileName(const string& basename, time_t* now, bool isRoll)
 {
     string filename;
     filename.reserve(basename.size() + 64);
@@ -99,17 +99,18 @@ string LogFile::getLogFileName(const string& basename, time_t* now)
     *now = time(NULL);
     gmtime_r(now, &tm);
 
-    strftime(timebuf, sizeof(timebuf), ".%Y%m%d-%H%M%S.", &tm);
+    strftime(timebuf, sizeof(timebuf), "%Y%m%d.", &tm);
     filename += timebuf;
 
     filename += ProcessInfo::hostname();
-
-    char pidbuf[32];
-
-    snprintf(pidbuf, sizeof(pidbuf), ".%d", ProcessInfo::pid());
-    filename += pidbuf;
-
     filename += ".log";
+    
+    if (isRoll) {
+        strftime(timebuf, sizeof timebuf, "-%Y%m%d_%H%M%S", &tm);
+        string newname = filename + timebuf;
+        newname += ".roll";
+        rename(filename.c_str(), newname.c_str());
+    }
 
     return filename;
 }

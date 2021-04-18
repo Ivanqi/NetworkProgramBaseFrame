@@ -68,7 +68,7 @@ namespace net
             EventCallback errorCallback_;
         
         public:
-            Channel(EventLoop *loop, int f);
+            Channel(EventLoop *loop, int fd);
 
             ~Channel();
 
@@ -110,6 +110,7 @@ namespace net
                 return events_;
             }
 
+            // used by pollers
             void set_revents(int revt)
             {
                 revents_ = revt;

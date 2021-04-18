@@ -57,7 +57,7 @@ Timestamp EPollPoller::poll(int timeoutMs, ChannelList *activeChannels)
             events_.resize(events_.size() * 2);
         }
     } else if (numEvents == 0) {
-        LOG_TRACE << "nothing happend";
+        LOG_TRACE << "nothing happended";
     } else {
         // error happens, log uncommon ones
         if (savedErrno != EINTR) {

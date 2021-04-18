@@ -30,7 +30,7 @@ namespace networker
         private:
             void append_unlocked(const char* logfile, int lne);
 
-            static string getLogFileName(const string& basename, time_t* now);
+            static string getLogFileName(const string& basename, time_t* now, bool isRoll = false);
 
         public:
             // 每被append，checkEveryN_次。 flush一下，会往文件写。文件也带有缓冲区
@@ -42,7 +42,7 @@ namespace networker
             
             void flush();
 
-            bool rollFile();
+            bool rollFile(bool isRoll = false);
     };
 };
 
