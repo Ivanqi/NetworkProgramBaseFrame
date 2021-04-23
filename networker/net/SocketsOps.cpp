@@ -191,7 +191,11 @@ void sockets::shutdownWrite(int sockfd)
      *  成功则返回0
      *  失败返回-1
      */
-    assert(::shutdown(sockfd, SHUT_WR) == 0);
+    int ret = ::shutdown(sockfd, SHUT_WR);
+    if (ret == -1) {
+        LOG_ERROR << "sockfd: " << sockfd << " shutdown fail";
+    }
+    assert(ret == 0);
 }
 
 void sockets::toIpPort(char *buf, size_t size, const struct sockaddr* addr)

@@ -71,7 +71,6 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
         if (logHup_) {
             LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLHUP";
         }
-        LOG_TRACE << "fd = " << fd_ << " close socket";
         if (closeCallback_) closeCallback_();
     }
 
