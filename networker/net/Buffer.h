@@ -9,6 +9,7 @@
 #include <vector>
 #include <assert.h>
 #include <string.h>
+#include <iostream>
 
 namespace networker
 {
@@ -38,7 +39,7 @@ namespace net
             static const size_t kCheapPrepend = 8;
             static const size_t kInitialSize = 1024;
 
-            explicit Buffer(size_t initialSize = kInitialSize): buffer_(kCheapPrepend + kInitialSize), 
+            explicit Buffer(size_t initialSize = kInitialSize): buffer_(kCheapPrepend + initialSize), 
                 readerIndex_(kCheapPrepend), writerIndex_(kCheapPrepend)
             {
                 assert(readableBytes() == 0);
@@ -76,6 +77,15 @@ namespace net
             const char* findCRLF() const
             {
                 const char* crlf = std::search(peek(), beginWrite(), kCRLF, kCRLF + 2);
+                return crlf == beginWrite() ? NULL : crlf;
+            }
+
+            const char* findCRLF(const char* start) const
+            {
+                assert(peek() <= start);
+                assert(start <= beginWrite());
+                // FIXME: replace with memmem()?
+                const char* crlf = std::search(start, beginWrite(), kCRLF, kCRLF+2);
                 return crlf == beginWrite() ? NULL : crlf;
             }
 
