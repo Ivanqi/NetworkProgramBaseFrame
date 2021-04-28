@@ -84,7 +84,9 @@ int sockets::createNonblockingOrDie(sa_family_t family)
      *  Tcp 协议
      */
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
-    assert(sockfd > 0);
+    if (sockfd < 0) {
+        LOG_SYSERR << "sockets::createNonblockingOrDie";
+    }
     return sockfd;
 }
 
@@ -109,7 +111,6 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
     socklen_t addrlen = static_cast<socklen_t>(sizeof(*addr));
     int connfd = ::accept(sockfd, sockaddr_cast(addr), &addrlen);
     setNonBlockAndCloseOnExec(connfd);
-
 
     if (connfd < 0) {
         int savedErrno = errno;
@@ -174,7 +175,9 @@ void sockets::close(int sockfd)
      *  若文件顺利关闭则返回0
      *  发生错误时返回-1
      */
-    assert(::close(sockfd) == 0);
+    if (::close(sockfd) < 0) {
+        LOG_SYSERR << "sockets::close";
+    }
 }
 
 void sockets::shutdownWrite(int sockfd)
@@ -193,9 +196,8 @@ void sockets::shutdownWrite(int sockfd)
      */
     int ret = ::shutdown(sockfd, SHUT_WR);
     if (ret == -1) {
-        LOG_ERROR << "sockfd: " << sockfd << " shutdown fail";
+        LOG_SYSERR << "sockfd: " << sockfd << " shutdown fail";
     }
-    assert(ret == 0);
 }
 
 void sockets::toIpPort(char *buf, size_t size, const struct sockaddr* addr)
@@ -241,7 +243,9 @@ void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* add
 {
     addr->sin6_family = AF_INET6;
     addr->sin6_port = hostToNetwork16(port);
-    assert (::inet_pton(AF_INET6, ip, &addr->sin6_addr) == 1);
+    if (::inet_pton(AF_INET6, ip, &addr->sin6_addr) <= 0) {
+        LOG_SYSERR << "sockets::fromIpPort";
+    }
 }
 
 int sockets::getSocketError(int sockfd)
