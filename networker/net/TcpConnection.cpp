@@ -166,7 +166,7 @@ void TcpConnection::shutdownInLoop()
 void TcpConnection::forceClose()
 {
     // 使用比较和交换
-    if (state_ == kConnected || state_ == kDisconnected) {
+    if (state_ == kConnected || state_ == kDisconnecting) {
         setState(kDisconnecting);
         loop_->queueInLoop(std::bind(&TcpConnection::forceCloseInLoop, shared_from_this()));
     }

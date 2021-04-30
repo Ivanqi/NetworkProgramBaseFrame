@@ -132,7 +132,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
             case ENOMEM:
             case ENOTSOCK:
             case EOPNOTSUPP:
-                LOG_FATAL << "unexpected error of ::accept " << savedErrno;
+                LOG_FATAL << "sockfd:" << sockfd << " | connfd: " << connfd << " unexpected error of ::accept " << savedErrno;
                 break;
             default:
                 LOG_FATAL << "unknown error of ::accept " << savedErrno;
@@ -195,7 +195,7 @@ void sockets::shutdownWrite(int sockfd)
      *  失败返回-1
      */
     int ret = ::shutdown(sockfd, SHUT_WR);
-    if (ret == -1) {
+    if (ret < 0) {
         LOG_SYSERR << "sockfd: " << sockfd << " shutdown fail";
     }
 }

@@ -6,6 +6,7 @@
 #include "networker/base/CurrentThread.h"
 #include "networker/base/Timestamp.h"
 #include "networker/base/TimeZone.h"
+#include <iostream>
 
 namespace networker 
 {
@@ -161,6 +162,7 @@ Logger::~Logger()
     const LogStream::Buffer& buf(stream().buffer());
     g_output(buf.data(), buf.length());
     if (Redcord.level_ == FATAL) {
+        std::cout << buf.data() << std::endl;
         g_flush();
         abort();
     }

@@ -42,8 +42,6 @@ void LogFile::flush()
     } else {
         file_->flush();
     }
-    
-   
 }
 
 void LogFile::append_unlocked(const char* logline, int len) 
