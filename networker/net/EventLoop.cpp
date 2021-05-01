@@ -22,6 +22,10 @@ namespace
 
     int createEventfd()
     {
+        /**
+         * eventfd是系统提供的一个轻量级的进程间通信的系统调用，eventfd实现了线程的异步唤醒
+         * eventfd()会返回一个文件描述符，如果该进程被fork的时候，这个文件描述符也会复制过去，这时候就会有多个的文件描述符指向同一个eventfd对象
+         */
         int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
         if (evtfd < 0) {
             LOG_SYSERR << "Failed in eventfd";
